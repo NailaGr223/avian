@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/additional-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="cart-container">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <h2 class="cart-items-title">Shopping Cart</h2>
+
+                {% if cart_items %}
+                    <div id="cart-items-list">
+                        {% for item in cart_items %}
+                            <div class="cart-item" data-item-id="{{ item.id }}">
+                                <!-- Image -->
+                                <div class="cart-item-image">
+                                    <img src="{{ item.bird_image }}" alt="{{ item.bird_name }}" />
+                                </div>
+
+                                <!-- Details -->
+                                <div class="cart-item-details">
+                                    <h3 class="cart-item-name">{{ item.bird_name }}</h3>
+                                    <p class="cart-item-seller">Seller: {{ item.seller_name }}</p>
+                                    <p class="cart-item-price">${{ item.price }}</p>
+                                    <p style="font-size: var(--font-size-xs); color: var(--color-gray-medium);">
+                                        {{ item.breed_type }} • {{ item.age }} • {{ item.gender }}
+                                    </p>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="cart-item-actions">
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn" onclick="updateQuantity('{{ item.id }}', -1)">−</button>
+                                        <div class="quantity-display" id="qty-{{ item.id }}">{{ item.quantity }}</div>
+                                        <button class="quantity-btn" onclick="updateQuantity('{{ item.id }}', 1)">+</button>
+                                    </div>
+                                    <button class="remove-item-btn" onclick="removeFromCart('{{ item.id }}')">🗑</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Empty Cart -->
+                    <div class="cart-empty">
+                        <div class="cart-empty-icon">🛒</div>
+                        <h3 style="color: var(--color-primary);">Your Cart is Empty</h3>
+                        <p style="color: var(--color-gray-medium);">Start shopping and add birds to your cart</p>
+                        <a href="/marketplace" class="btn btn-primary" style="margin-top: var(--spacing-lg);">Browse Birds</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Cart Summary -->
+            {% if cart_items %}
+                <div class="cart-summary">
+                    <h3 class="cart-summary-title">Order Summary</h3>
+
+                    <div class="cart-summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ subtotal }}</span>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Shipping</span>
+                        <span>${{ shipping_cost }}</span>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Tax</span>
+                        <span>${{ tax }}</span>
+                    </div>
+
+                    {% if discount_code %}
+                        <div class="cart-summary-row" style="color: var(--color-success);">
+                            <span>Discount ({{ discount_code }})</span>
+                            <span>-${{ discount_amount }}</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="cart-summary-total">
+                        <span>Total</span>
+                        <span>${{ total }}</span>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <form onsubmit="applyPromoCode(event)">
+                            <div style="display: flex; gap: var(--spacing-md);">
+                                <input type="text" id="promo-code" placeholder="Promo code" style="flex: 1; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);" />
+                                <button type="submit" class="btn btn-outline" style="padding: var(--spacing-md);">Apply</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="cart-actions">
+                        <a href="/checkout" class="btn btn-primary">Proceed to Checkout</a>
+                        <a href="/marketplace" class="btn btn-outline">Continue Shopping</a>
+                    </div>
+
+                    <!-- Security Badge -->
+                    <div style="text-align: center; margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray);">
+                        <p style="font-size: var(--font-size-xs); color: var(--color-gray-medium); margin: 0;">🔒 Secure Checkout</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function updateQuantity(itemId, change) {
+            const currentQty = parseInt(document.getElementById(`qty-${itemId}`).textContent);
+            const newQty = currentQty + change;
+
+            if (newQty < 1) {
+                removeFromCart(itemId);
+                return;
+            }
+
+            API.post(`/cart/update/${itemId}`, { quantity: newQty })
+                .then(response => {
+                    document.getElementById(`qty-${itemId}`).textContent = newQty;
+                    location.reload();
+                })
+                .catch(error => {
+                    Notification.error('Failed to update quantity');
+                });
+        }
+
+        function removeFromCart(itemId) {
+            if (confirm('Remove this item from cart?')) {
+                API.post(`/cart/remove/${itemId}`)
+                    .then(response => {
+                        document.querySelector(`[data-item-id="${itemId}"]`).remove();
+                        Notification.success('Removed from cart');
+                        
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    })
+                    .catch(error => {
+                        Notification.error('Failed to remove from cart');
+                    });
+            }
+        }
+
+        function applyPromoCode(event) {
+            event.preventDefault();
+            const code = document.getElementById('promo-code').value;
+
+            if (!code) {
+                Notification.error('Please enter a promo code');
+                return;
+            }
+
+            API.post('/cart/apply-promo', { code: code })
+                .then(response => {
+                    Notification.success('Promo code applied!');
+                    location.reload();
+                })
+                .catch(error => {
+                    Notification.error('Invalid promo code');
+                });
+        }
+    </script>
+{% endblock %}

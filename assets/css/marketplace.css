@@ -1,0 +1,518 @@
+/* ============================================
+   MARKETPLACE STYLES
+   ============================================ */
+
+.marketplace-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-2xl) 0;
+    min-height: calc(100vh - 400px);
+}
+
+/* Sidebar Filters */
+.marketplace-sidebar {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+    box-shadow: var(--shadow-md);
+}
+
+.filter-section {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--color-gray);
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.filter-option input[type="checkbox"],
+.filter-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.filter-option label {
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin: 0;
+    flex: 1;
+}
+
+.filter-range {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.filter-range input[type="number"] {
+    width: 70px;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+}
+
+.filter-range span {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+}
+
+.filter-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.filter-buttons .btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+/* Main Content */
+.marketplace-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.marketplace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+}
+
+.marketplace-title {
+    font-size: var(--font-size-2xl);
+    color: var(--color-primary);
+}
+
+.marketplace-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.view-toggle {
+    display: flex;
+    gap: var(--spacing-sm);
+    border: 2px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    background-color: var(--color-white);
+}
+
+.view-toggle button {
+    background: none;
+    border: none;
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    color: var(--color-gray-medium);
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-lg);
+}
+
+.view-toggle button.active {
+    color: var(--color-primary);
+    background-color: var(--color-light-gray);
+    border-radius: var(--radius-sm);
+}
+
+.sort-select {
+    padding: var(--spacing-md);
+    border: 2px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    color: var(--color-black);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
+}
+
+/* Bird Listings Grid */
+.bird-listings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.bird-listing-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-listing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.bird-listing-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background-color: var(--color-light-gray);
+}
+
+.bird-listing-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.bird-listing-card:hover .bird-listing-image img {
+    transform: scale(1.05);
+}
+
+.bird-listing-badges {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.bird-listing-badge {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    z-index: 2;
+}
+
+.bird-listing-badge.verified {
+    background-color: var(--color-success);
+}
+
+.bird-listing-badge.featured {
+    background-color: var(--color-warning);
+}
+
+.bird-listing-body {
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-listing-title {
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.bird-listing-breed {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-md);
+}
+
+.bird-listing-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-xs);
+}
+
+.bird-listing-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-listing-detail-label {
+    color: var(--color-gray-medium);
+    font-weight: 600;
+}
+
+.bird-listing-detail-value {
+    color: var(--color-black);
+    margin-top: 2px;
+}
+
+.bird-listing-location {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-md);
+}
+
+.bird-listing-price {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.bird-listing-seller {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background-color: var(--color-light-gray);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.bird-listing-seller-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-weight: 700;
+}
+
+.bird-listing-seller-info {
+    flex: 1;
+}
+
+.bird-listing-seller-name {
+    font-weight: 600;
+    color: var(--color-black);
+}
+
+.bird-listing-seller-rating {
+    color: var(--color-gray-medium);
+    font-size: var(--font-size-xs);
+}
+
+.bird-listing-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: auto;
+}
+
+.bird-listing-actions .btn {
+    flex: 1;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-2xl);
+}
+
+.pagination a,
+.pagination button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--color-gray);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.pagination a:hover,
+.pagination button:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-light-gray);
+}
+
+.pagination .active {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+.pagination .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-3xl) var(--spacing-lg);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+.empty-state-title {
+    font-size: var(--font-size-xl);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state-text {
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .marketplace-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .marketplace-sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        height: auto;
+    }
+    
+    .filter-section {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .marketplace-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .marketplace-controls {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .sort-select {
+        flex: 1;
+        min-width: 150px;
+    }
+    
+    .bird-listings-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .marketplace-sidebar {
+        grid-template-columns: 1fr;
+    }
+    
+    .bird-listings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .marketplace-controls {
+        flex-direction: column;
+    }
+    
+    .view-toggle,
+    .sort-select {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Marketplace */
+[data-theme="dark"] .marketplace-sidebar {
+    background-color: var(--color-dark-surface-light);
+}
+
+[data-theme="dark"] .filter-section {
+    border-bottom-color: var(--color-dark-surface);
+}
+
+[data-theme="dark"] .bird-listing-card {
+    background-color: var(--color-dark-surface-light);
+}
+
+[data-theme="dark"] .bird-listing-image {
+    background-color: var(--color-dark-surface);
+}
+
+[data-theme="dark"] .bird-listing-seller {
+    background-color: var(--color-dark-surface);
+}
+
+[data-theme="dark"] .sort-select,
+[data-theme="dark"] .view-toggle {
+    background-color: var(--color-dark-surface-light);
+    border-color: var(--color-dark-surface);
+    color: var(--color-dark-text);
+}
+
+[data-theme="dark"] .sort-select:focus {
+    border-color: #7dd3b0;
+    box-shadow: 0 0 0 3px rgba(125, 211, 176, 0.1);
+}
+
+[data-theme="dark"] .pagination a,
+[data-theme="dark"] .pagination button {
+    background-color: var(--color-dark-surface-light);
+    border-color: var(--color-dark-surface);
+    color: #7dd3b0;
+}
+
+[data-theme="dark"] .pagination a:hover,
+[data-theme="dark"] .pagination button:hover {
+    background-color: var(--color-dark-surface);
+    border-color: #7dd3b0;
+}
+
+[data-theme="dark"] .pagination .active {
+    background-color: #4a9d6f;
+    border-color: #4a9d6f;
+}

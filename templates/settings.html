@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 250px 1fr; gap: var(--spacing-2xl); padding: var(--spacing-2xl) 0;">
+            <!-- Settings Sidebar -->
+            <aside style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); height: fit-content; position: sticky; top: 100px;">
+                <h3 style="margin: 0 0 var(--spacing-lg); color: var(--color-primary);">Settings</h3>
+                <nav style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                    <button class="settings-nav-item active" onclick="showSection('profile')">👤 Profile</button>
+                    <button class="settings-nav-item" onclick="showSection('account')">🔐 Account</button>
+                    <button class="settings-nav-item" onclick="showSection('notifications')">🔔 Notifications</button>
+                    <button class="settings-nav-item" onclick="showSection('privacy')">🔒 Privacy</button>
+                    <button class="settings-nav-item" onclick="showSection('payment')">💳 Payment Methods</button>
+                    <button class="settings-nav-item" onclick="showSection('preferences')">⚙️ Preferences</button>
+                </nav>
+            </aside>
+
+            <!-- Settings Content -->
+            <main>
+                <!-- Profile Section -->
+                <div id="profile-section" class="settings-section">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Profile Settings</h2>
+
+                        <form id="profile-form" method="POST" enctype="multipart/form-data">
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Profile Picture</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-lg);">
+                                    <img id="profile-preview" src="{{ user.profile_picture }}" alt="Profile" style="width: 100px; height: 100px; border-radius: var(--radius-full); object-fit: cover;" />
+                                    <div>
+                                        <input type="file" id="profile-picture" name="profile_picture" accept="image/*" onchange="previewImage()" style="display: none;" />
+                                        <button type="button" class="btn btn-outline" onclick="document.getElementById('profile-picture').click()">Change Picture</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Full Name</label>
+                                <input type="text" name="full_name" value="{{ user.full_name }}" required style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);" />
+                            </div>
+
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Email</label>
+                                <input type="email" value="{{ user.email }}" disabled style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); background-color: var(--color-light-gray);" />
+                            </div>
+
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Phone Number</label>
+                                <input type="tel" name="phone" value="{{ user.phone }}" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);" />
+                            </div>
+
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Bio</label>
+                                <textarea name="bio" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); resize: vertical; min-height: 100px;">{{ user.bio }}</textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Account Section -->
+                <div id="account-section" class="settings-section" style="display: none;">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Account Settings</h2>
+
+                        <div style="margin-bottom: var(--spacing-2xl);">
+                            <h3 style="margin-bottom: var(--spacing-lg);">Change Password</h3>
+                            <form id="password-form" method="POST">
+                                <div style="margin-bottom: var(--spacing-lg);">
+                                    <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Current Password</label>
+                                    <input type="password" name="current_password" required style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);" />
+                                </div>
+
+                                <div style="margin-bottom: var(--spacing-lg);">
+                                    <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">New Password</label>
+                                    <input type="password" name="new_password" required style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);" />
+                                </div>
+
+                                <div style="margin-bottom: var(--spacing-lg);">
+                                    <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Confirm Password</label>
+                                    <input type="password" name="confirm_password" required style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);" />
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </form>
+                        </div>
+
+                        <div style="border-top: 2px solid var(--color-gray); padding-top: var(--spacing-lg);">
+                            <h3 style="margin-bottom: var(--spacing-lg); color: var(--color-danger);">Danger Zone</h3>
+                            <button class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                            <p style="font-size: var(--font-size-sm); color: var(--color-gray-medium); margin-top: var(--spacing-md);">This action cannot be undone. All your data will be permanently deleted.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div id="notifications-section" class="settings-section" style="display: none;">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Notification Preferences</h2>
+
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="email_orders" checked />
+                                <span>
+                                    <strong>Order Updates</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Get notified about order status changes</p>
+                                </span>
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="email_messages" checked />
+                                <span>
+                                    <strong>Messages</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Get notified when you receive messages</p>
+                                </span>
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="email_reviews" checked />
+                                <span>
+                                    <strong>Reviews</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Get notified about new reviews</p>
+                                </span>
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="email_promotions" />
+                                <span>
+                                    <strong>Promotions</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Receive promotional offers and updates</p>
+                                </span>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary" style="margin-top: var(--spacing-lg);">Save Preferences</button>
+                    </div>
+                </div>
+
+                <!-- Privacy Section -->
+                <div id="privacy-section" class="settings-section" style="display: none;">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Privacy Settings</h2>
+
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="public_profile" checked />
+                                <span>
+                                    <strong>Public Profile</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Allow others to view your profile</p>
+                                </span>
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="show_email" />
+                                <span>
+                                    <strong>Show Email</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Display email on your profile</p>
+                                </span>
+                            </label>
+
+                            <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                                <input type="checkbox" name="show_phone" />
+                                <span>
+                                    <strong>Show Phone</strong>
+                                    <p style="margin: var(--spacing-sm) 0 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Display phone on your profile</p>
+                                </span>
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary" style="margin-top: var(--spacing-lg);">Save Privacy Settings</button>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div id="payment-section" class="settings-section" style="display: none;">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Payment Methods</h2>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <button class="btn btn-primary" onclick="addPaymentMethod()">Add Payment Method</button>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
+                            {% for method in payment_methods %}
+                                <div style="background-color: var(--color-light-gray); padding: var(--spacing-lg); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <p style="margin: 0 0 var(--spacing-sm); font-weight: 600;">{{ method.type }} ending in {{ method.last_four }}</p>
+                                        <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">Expires {{ method.expiry }}</p>
+                                    </div>
+                                    <button class="btn btn-outline" onclick="removePaymentMethod('{{ method.id }}')">Remove</button>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div id="preferences-section" class="settings-section" style="display: none;">
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md);">
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-lg);">Preferences</h2>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Language</label>
+                            <select style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);">
+                                <option>English</option>
+                                <option>Spanish</option>
+                                <option>French</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md);">Currency</label>
+                            <select style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md);">
+                                <option>USD ($)</option>
+                                <option>EUR (€)</option>
+                                <option>GBP (£)</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary">Save Preferences</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <style>
+        .settings-nav-item {
+            padding: var(--spacing-md);
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .settings-nav-item:hover {
+            background-color: var(--color-light-gray);
+        }
+
+        .settings-nav-item.active {
+            background-color: var(--color-green-very-light);
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .settings-section {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.settings-section').forEach(el => el.style.display = 'none');
+            document.getElementById(`${section}-section`).style.display = 'block';
+            
+            document.querySelectorAll('.settings-nav-item').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function previewImage() {
+            const file = document.getElementById('profile-picture').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you absolutely sure? This action cannot be undone.')) {
+                if (confirm('Type "DELETE" to confirm account deletion.')) {
+                    API.post('/account/delete')
+                        .then(response => {
+                            window.location.href = '/';
+                        });
+                }
+            }
+        }
+
+        function addPaymentMethod() {
+            window.location.href = '/add-payment-method';
+        }
+
+        function removePaymentMethod(methodId) {
+            if (confirm('Remove this payment method?')) {
+                API.post(`/payment-method/${methodId}/remove`)
+                    .then(response => {
+                        location.reload();
+                    });
+            }
+        }
+    </script>
+{% endblock %}

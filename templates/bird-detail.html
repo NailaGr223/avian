@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}{{ bird.breed }} - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bird-detail.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="bird-detail-container">
+            <!-- Left Column: Gallery & Details -->
+            <div>
+                <!-- Image Gallery -->
+                <div class="bird-gallery">
+                    <div class="bird-gallery-main">
+                        <img id="main-image" src="{{ bird.image_url }}" alt="{{ bird.breed }}" />
+                    </div>
+                    <div class="bird-gallery-thumbnails">
+                        <div class="bird-gallery-thumbnail active" data-image="{{ bird.image_url }}">
+                            <img src="{{ bird.image_url }}" alt="Main" />
+                        </div>
+                        {% for image in bird.additional_images %}
+                            <div class="bird-gallery-thumbnail" data-image="{{ image }}">
+                                <img src="{{ image }}" alt="Gallery" />
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Bird Details Grid -->
+                <div class="bird-details">
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Species</span>
+                        <span class="bird-detail-value">{{ bird.species }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Breed</span>
+                        <span class="bird-detail-value">{{ bird.breed }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Age</span>
+                        <span class="bird-detail-value">{{ bird.age }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Gender</span>
+                        <span class="bird-detail-value">{{ bird.gender }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Health Status</span>
+                        <span class="bird-detail-value">{{ bird.health_status }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Location</span>
+                        <span class="bird-detail-value">{{ bird.location }}</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Available</span>
+                        <span class="bird-detail-value">{{ bird.quantity_available }} in stock</span>
+                    </div>
+                    <div class="bird-detail-item">
+                        <span class="bird-detail-label">Listed</span>
+                        <span class="bird-detail-value">{{ bird.created_at|date.strftime('%b %d, %Y') }}</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="bird-description">
+                    <h3>About This Bird</h3>
+                    <p>{{ bird.description }}</p>
+                </div>
+
+                <!-- Health Certificate -->
+                {% if bird.health_certificate %}
+                    <div class="bird-health-certificate">
+                        <h3>
+                            <span class="health-badge">
+                                <span>✓</span>
+                                <span>Health Certificate Available</span>
+                            </span>
+                        </h3>
+                        <p>This bird comes with a verified health certificate from a licensed veterinarian.</p>
+                        <a href="{{ bird.health_certificate }}" class="certificate-link" download>Download Certificate</a>
+                    </div>
+                {% endif %}
+
+                <!-- Reviews Section -->
+                <div class="bird-reviews">
+                    <div class="reviews-header">
+                        <h3>Customer Reviews</h3>
+                        <span>{{ bird.reviews_count }} reviews</span>
+                    </div>
+
+                    <div class="reviews-summary">
+                        <div class="reviews-average">
+                            <div class="reviews-average-rating">{{ bird.average_rating }}</div>
+                            <div class="reviews-average-count">out of 5</div>
+                        </div>
+                        <div class="reviews-breakdown" style="flex: 1;">
+                            {% for i in range(5, 0, -1) %}
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                    <span>{{ i }}★</span>
+                                    <div style="flex: 1; height: 8px; background-color: var(--color-gray); border-radius: 4px; overflow: hidden;">
+                                        <div style="height: 100%; background-color: var(--color-primary); width: {{ bird.rating_distribution[i] }}%;"></div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% for review in bird.reviews %}
+                        <div class="review-item">
+                            <div class="review-avatar">{{ review.author_name[0] }}</div>
+                            <div class="review-content">
+                                <div class="review-header">
+                                    <span class="review-author">{{ review.author_name }}</span>
+                                    <span class="review-date">{{ review.created_at|date.strftime('%b %d, %Y') }}</span>
+                                </div>
+                                <div class="review-rating">
+                                    {% for i in range(review.rating) %}★{% endfor %}
+                                </div>
+                                <div class="review-text">{{ review.text }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Right Column: Seller & Purchase -->
+            <aside>
+                <!-- Price Section -->
+                {% if bird.price %}
+                    <div class="bird-price-section">
+                        <div class="bird-price">${{ bird.price }}</div>
+                        <div class="bird-price-info">
+                            {% if bird.type == 'sell' %}
+                                <p>Listed for sale</p>
+                            {% elif bird.type == 'rehome' %}
+                                <p>Available for rehoming</p>
+                            {% else %}
+                                <p>Available for adoption</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Seller Information -->
+                <div class="bird-seller-card">
+                    <div class="seller-header">
+                        <div class="seller-avatar">{{ seller.name[0] }}</div>
+                        <div class="seller-info">
+                            <h3>{{ seller.name }}</h3>
+                            <div class="seller-rating">
+                                <span class="seller-rating-stars">
+                                    {% for i in range(seller.rating|int) %}★{% endfor %}
+                                </span>
+                                <span>({{ seller.reviews_count }} reviews)</span>
+                            </div>
+                            {% if seller.is_verified %}
+                                <div style="font-size: 0.875rem; color: var(--color-success); margin-top: 0.5rem;">✓ Verified Seller</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="seller-details">
+                        <div class="seller-detail">
+                            <span class="seller-detail-icon">📍</span>
+                            <span>{{ seller.location }}</span>
+                        </div>
+                        <div class="seller-detail">
+                            <span class="seller-detail-icon">📞</span>
+                            <span>{{ seller.phone }}</span>
+                        </div>
+                        <div class="seller-detail">
+                            <span class="seller-detail-icon">📧</span>
+                            <span>{{ seller.email }}</span>
+                        </div>
+                        <div class="seller-detail">
+                            <span class="seller-detail-icon">📦</span>
+                            <span>{{ seller.total_sales }} birds sold</span>
+                        </div>
+                    </div>
+
+                    <div class="seller-actions">
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-primary" onclick="addToCart('{{ bird.id }}')">Add to Cart</button>
+                            <button class="btn btn-outline" onclick="contactSeller('{{ seller.id }}')">Contact Seller</button>
+                        {% else %}
+                            <a href="/login" class="btn btn-primary">Login to Purchase</a>
+                            <a href="/register" class="btn btn-outline">Create Account</a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Additional Actions -->
+                    <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray);">
+                        <button class="bird-info-action-btn" title="Save to Wishlist" onclick="toggleWishlist('{{ bird.id }}')">❤️</button>
+                        <button class="bird-info-action-btn" title="Share" onclick="shareBird('{{ bird.id }}')">🔗</button>
+                        <button class="bird-info-action-btn" title="Report" onclick="reportBird('{{ bird.id }}')">⚠️</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Gallery thumbnail click handler
+        document.querySelectorAll('.bird-gallery-thumbnail').forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                document.querySelectorAll('.bird-gallery-thumbnail').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('main-image').src = this.dataset.image;
+            });
+        });
+
+        function addToCart(birdId) {
+            API.post('/cart/add', { bird_id: birdId })
+                .then(response => {
+                    Notification.success('Added to cart!');
+                })
+                .catch(error => {
+                    Notification.error('Failed to add to cart');
+                });
+        }
+
+        function contactSeller(sellerId) {
+            window.location.href = `/messages?seller_id=${sellerId}`;
+        }
+
+        function toggleWishlist(birdId) {
+            API.post('/wishlist/toggle', { bird_id: birdId })
+                .then(response => {
+                    const btn = event.target.closest('.bird-info-action-btn');
+                    btn.classList.toggle('active');
+                    Notification.success(response.message);
+                })
+                .catch(error => {
+                    Notification.error('Failed to update wishlist');
+                });
+        }
+
+        function shareBird(birdId) {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this bird!',
+                    url: url
+                });
+            } else {
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                Notification.success('Link copied to clipboard!');
+            }
+        }
+
+        function reportBird(birdId) {
+            window.location.href = `/report-abuse?bird_id=${birdId}`;
+        }
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/bird-detail.js') }}"></script>
+{% endblock %}

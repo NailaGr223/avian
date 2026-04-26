@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/additional-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="notifications-container">
+            <!-- Header -->
+            <div class="notifications-header">
+                <h1 style="color: var(--color-primary); margin: 0;">Notifications</h1>
+                {% if unread_count > 0 %}
+                    <button class="btn btn-outline" onclick="markAllAsRead()">Mark All as Read</button>
+                {% endif %}
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="notifications-filter">
+                <button class="notification-filter-btn active" onclick="filterNotifications('all')">All</button>
+                <button class="notification-filter-btn" onclick="filterNotifications('orders')">Orders</button>
+                <button class="notification-filter-btn" onclick="filterNotifications('messages')">Messages</button>
+                <button class="notification-filter-btn" onclick="filterNotifications('reviews')">Reviews</button>
+                <button class="notification-filter-btn" onclick="filterNotifications('system')">System</button>
+            </div>
+
+            <!-- Notifications List -->
+            {% if notifications %}
+                <div class="notifications-list" id="notifications-list">
+                    {% for notification in notifications %}
+                        <div class="notification-item {% if not notification.is_read %}unread{% endif %}" data-notification-id="{{ notification.id }}">
+                            <div class="notification-icon">
+                                {% if notification.type == 'order' %}
+                                    📦
+                                {% elif notification.type == 'message' %}
+                                    💬
+                                {% elif notification.type == 'review' %}
+                                    ⭐
+                                {% elif notification.type == 'system' %}
+                                    ℹ️
+                                {% else %}
+                                    🔔
+                                {% endif %}
+                            </div>
+
+                            <div class="notification-content">
+                                <h3 class="notification-title">{{ notification.title }}</h3>
+                                <p class="notification-message">{{ notification.message }}</p>
+                                <div class="notification-time">{{ notification.created_at|relative_time }}</div>
+                            </div>
+
+                            <div class="notification-actions">
+                                {% if notification.action_url %}
+                                    <a href="{{ notification.action_url }}" class="notification-action-btn">View</a>
+                                {% endif %}
+                                <button class="notification-action-btn" onclick="deleteNotification('{{ notification.id }}')">Delete</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                    <div style="display: flex; justify-content: center; gap: var(--spacing-md); margin-top: var(--spacing-2xl);">
+                        {% if current_page > 1 %}
+                            <a href="/notifications?page=1" class="btn btn-outline">First</a>
+                            <a href="/notifications?page={{ current_page - 1 }}" class="btn btn-outline">Previous</a>
+                        {% endif %}
+
+                        {% for page in range(max(1, current_page - 2), min(total_pages + 1, current_page + 3)) %}
+                            {% if page == current_page %}
+                                <button class="btn btn-primary" disabled>{{ page }}</button>
+                            {% else %}
+                                <a href="/notifications?page={{ page }}" class="btn btn-outline">{{ page }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if current_page < total_pages %}
+                            <a href="/notifications?page={{ current_page + 1 }}" class="btn btn-outline">Next</a>
+                            <a href="/notifications?page={{ total_pages }}" class="btn btn-outline">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="notification-empty">
+                    <div class="notification-empty-icon">🎉</div>
+                    <h3 style="color: var(--color-primary);">All Caught Up!</h3>
+                    <p style="color: var(--color-gray-medium);">You have no new notifications</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterNotifications(type) {
+            if (type === 'all') {
+                window.location.href = '/notifications';
+            } else {
+                window.location.href = `/notifications?type=${type}`;
+            }
+        }
+
+        function markAllAsRead() {
+            API.post('/notifications/mark-all-read')
+                .then(response => {
+                    document.querySelectorAll('.notification-item.unread').forEach(el => {
+                        el.classList.remove('unread');
+                    });
+                    Notification.success('All notifications marked as read');
+                })
+                .catch(error => {
+                    Notification.error('Failed to mark notifications as read');
+                });
+        }
+
+        function deleteNotification(notificationId) {
+            API.post(`/notifications/${notificationId}/delete`)
+                .then(response => {
+                    document.querySelector(`[data-notification-id="${notificationId}"]`).remove();
+                    Notification.success('Notification deleted');
+                })
+                .catch(error => {
+                    Notification.error('Failed to delete notification');
+                });
+        }
+
+        // Auto-refresh notifications every 30 seconds
+        setInterval(() => {
+            API.get('/notifications/unread-count')
+                .then(response => {
+                    if (response.count > 0) {
+                        location.reload();
+                    }
+                });
+        }, 30000);
+    </script>
+{% endblock %}

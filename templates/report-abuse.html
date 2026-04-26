@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Report Abuse - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="report-form">
+            <!-- Header -->
+            <div class="report-form-header">
+                <h1>Report Abuse</h1>
+                <p>Help us maintain a safe and ethical marketplace. Report any suspicious or inappropriate activity.</p>
+            </div>
+
+            <!-- Report Form -->
+            <form id="abuse-report-form" method="POST" action="/report-abuse">
+                <!-- Report Type -->
+                <div class="report-form-group">
+                    <label class="report-form-label">What are you reporting?</label>
+                    <select class="report-form-select" name="report_type" required onchange="updateReportType()">
+                        <option value="">Select a type...</option>
+                        <option value="bird_listing">Bird Listing</option>
+                        <option value="user_account">User Account</option>
+                        <option value="seller">Seller</option>
+                        <option value="vet">Veterinarian</option>
+                        <option value="message">Message/Chat</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Item/User Selection -->
+                <div class="report-form-group" id="item-selection" style="display: none;">
+                    <label class="report-form-label">Select the item or user</label>
+                    <input type="text" class="report-form-input" name="item_id" placeholder="Enter ID or search..." />
+                </div>
+
+                <!-- Reason -->
+                <div class="report-form-group">
+                    <label class="report-form-label">Reason for Report</label>
+                    <select class="report-form-select" name="reason" required>
+                        <option value="">Select a reason...</option>
+                        <option value="inappropriate_content">Inappropriate Content</option>
+                        <option value="misleading_information">Misleading Information</option>
+                        <option value="illegal_activity">Illegal Activity</option>
+                        <option value="animal_welfare">Animal Welfare Concerns</option>
+                        <option value="fraud">Fraud/Scam</option>
+                        <option value="harassment">Harassment/Abuse</option>
+                        <option value="fake_account">Fake Account</option>
+                        <option value="unethical_practices">Unethical Practices</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Severity -->
+                <div class="report-form-group">
+                    <label class="report-form-label">Severity Level</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md);">
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; padding: var(--spacing-md); border: 2px solid var(--color-gray); border-radius: var(--radius-md); transition: all var(--transition-fast);" onchange="updateSeverity(this)">
+                            <input type="radio" name="severity" value="low" />
+                            <span>
+                                <strong>Low</strong>
+                                <br />
+                                <small style="color: var(--color-gray-medium);">Minor issue</small>
+                            </span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; padding: var(--spacing-md); border: 2px solid var(--color-gray); border-radius: var(--radius-md); transition: all var(--transition-fast);" onchange="updateSeverity(this)">
+                            <input type="radio" name="severity" value="medium" />
+                            <span>
+                                <strong>Medium</strong>
+                                <br />
+                                <small style="color: var(--color-gray-medium);">Moderate issue</small>
+                            </span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; padding: var(--spacing-md); border: 2px solid var(--color-gray); border-radius: var(--radius-md); transition: all var(--transition-fast);" onchange="updateSeverity(this)">
+                            <input type="radio" name="severity" value="high" />
+                            <span>
+                                <strong>High</strong>
+                                <br />
+                                <small style="color: var(--color-gray-medium);">Urgent issue</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="report-form-group">
+                    <label class="report-form-label">Detailed Description</label>
+                    <textarea class="report-form-textarea" name="description" placeholder="Please provide detailed information about the issue. Include any relevant dates, times, or screenshots." required></textarea>
+                </div>
+
+                <!-- Evidence -->
+                <div class="report-form-group">
+                    <label class="report-form-label">Attach Evidence (Optional)</label>
+                    <div style="border: 2px dashed var(--color-gray); border-radius: var(--radius-md); padding: var(--spacing-lg); text-align: center; cursor: pointer;" onclick="document.getElementById('evidence-input').click()">
+                        <p style="margin: 0 0 var(--spacing-md); font-size: 2rem;">📎</p>
+                        <p style="margin: 0 0 var(--spacing-sm); font-weight: 600;">Click to upload files</p>
+                        <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">or drag and drop (Max 5MB)</p>
+                        <input type="file" id="evidence-input" name="evidence" style="display: none;" accept="image/*,.pdf" />
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="report-form-group">
+                    <label class="report-form-label">Your Email (for follow-up)</label>
+                    <input type="email" class="report-form-input" name="reporter_email" value="{{ user.email if user.is_authenticated else '' }}" required />
+                </div>
+
+                <!-- Consent -->
+                <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md); margin-bottom: var(--spacing-lg);">
+                    <label style="display: flex; align-items: flex-start; gap: var(--spacing-md); cursor: pointer;">
+                        <input type="checkbox" name="consent" required style="margin-top: 4px;" />
+                        <span style="font-size: var(--font-size-sm);">
+                            I confirm that the information provided is accurate and true to the best of my knowledge. False reports may result in account suspension.
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Actions -->
+                <div class="report-form-actions">
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                    <a href="/" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+
+            <!-- Information Box -->
+            <div style="margin-top: var(--spacing-2xl); padding: var(--spacing-lg); background-color: var(--color-green-very-light); border-left: 4px solid var(--color-primary); border-radius: var(--radius-md);">
+                <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-primary);">ℹ️ What Happens Next?</h4>
+                <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-gray-medium); font-size: var(--font-size-sm);">
+                    <li>Our moderation team will review your report within 24-48 hours</li>
+                    <li>We will investigate the reported content or user</li>
+                    <li>If the report is valid, appropriate action will be taken</li>
+                    <li>You will receive an email update on the status of your report</li>
+                    <li>Reports are kept confidential and your identity is protected</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateReportType() {
+            const type = document.querySelector('select[name="report_type"]').value;
+            const itemSelection = document.getElementById('item-selection');
+            
+            if (['bird_listing', 'user_account', 'seller', 'vet', 'message'].includes(type)) {
+                itemSelection.style.display = 'block';
+            } else {
+                itemSelection.style.display = 'none';
+            }
+        }
+
+        function updateSeverity(label) {
+            document.querySelectorAll('label[onchange="updateSeverity(this)"]').forEach(l => {
+                l.style.borderColor = 'var(--color-gray)';
+                l.style.backgroundColor = 'transparent';
+            });
+            label.style.borderColor = 'var(--color-primary)';
+            label.style.backgroundColor = 'var(--color-green-very-light)';
+        }
+
+        document.getElementById('evidence-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                console.log('File selected:', fileName);
+            }
+        });
+
+        document.getElementById('abuse-report-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            API.post('/report-abuse/submit', formData)
+                .then(response => {
+                    Notification.success('Report submitted successfully. Thank you for helping us maintain a safe marketplace.');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                })
+                .catch(error => {
+                    Notification.error('Failed to submit report. Please try again.');
+                });
+        });
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/report-abuse.js') }}"></script>
+{% endblock %}

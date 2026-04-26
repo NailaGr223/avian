@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Avian Haven - Ethical Bird Marketplace{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <!-- Hero Carousel Section -->
+    <section class="hero-carousel" id="hero-carousel" data-carousel>
+        <div class="carousel-container">
+            <!-- Slide 1: Sell Birds -->
+            <div class="carousel-slide slide-sell">
+                <div class="carousel-content">
+                    <h1>Sell Your Birds</h1>
+                    <p>Connect with bird enthusiasts and find the perfect homes for your feathered friends. List your birds with detailed information and reach thousands of potential buyers.</p>
+                    <div class="carousel-buttons">
+                        <a href="/seller-dashboard" class="btn btn-outline">Start Selling</a>
+                        <a href="/marketplace?type=sell" class="btn btn-primary">Browse Listings</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Rehome Birds -->
+            <div class="carousel-slide slide-rehome">
+                <div class="carousel-content">
+                    <h1>Rehome Your Birds</h1>
+                    <p>Give your birds a second chance with our ethical rehoming platform. Connect with loving families who are ready to provide a caring home for your birds.</p>
+                    <div class="carousel-buttons">
+                        <a href="/marketplace?type=rehome" class="btn btn-outline">Find Homes</a>
+                        <a href="/how-it-works" class="btn btn-primary">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Adopt Birds -->
+            <div class="carousel-slide slide-adopt">
+                <div class="carousel-content">
+                    <h1>Adopt Your Next Companion</h1>
+                    <p>Discover beautiful birds available for adoption. Browse our adoption listings and find the perfect feathered friend to join your family today.</p>
+                    <div class="carousel-buttons">
+                        <a href="/marketplace?type=adopt" class="btn btn-outline">Browse Adoptions</a>
+                        <a href="/adoption-guide" class="btn btn-primary">Adoption Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-nav carousel-prev" aria-label="Previous slide">&#8249;</button>
+        <button class="carousel-nav carousel-next" aria-label="Next slide">&#8250;</button>
+        
+        <div class="carousel-controls">
+            <div class="carousel-indicator active" data-slide="0"></div>
+            <div class="carousel-indicator" data-slide="1"></div>
+            <div class="carousel-indicator" data-slide="2"></div>
+        </div>
+    </section>
+
+    <!-- Featured Birds Section -->
+    <section class="featured-birds-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Birds</h2>
+                <p>Discover our latest and most popular bird listings. Each bird is carefully verified and comes with detailed health and breed information.</p>
+            </div>
+
+            <div class="bird-cards-grid">
+                {% for bird in featured_birds %}
+                    <div class="bird-card" data-bird-id="{{ bird.id }}">
+                        <div class="bird-card-image">
+                            <img src="{{ bird.image_url }}" alt="{{ bird.breed }}" loading="lazy" />
+                            <span class="bird-card-badge {% if bird.type == 'rehome' %}rehome{% elif bird.type == 'adopt' %}adopt{% endif %}">
+                                {{ bird.type|capitalize }}
+                            </span>
+                        </div>
+                        
+                        <div class="bird-card-body">
+                            <h3 class="bird-card-title">{{ bird.breed }}</h3>
+                            <p class="bird-card-breed">{{ bird.species }}</p>
+                            
+                            <div class="bird-card-info">
+                                <div class="bird-card-info-item">
+                                    <span class="bird-card-info-label">Age</span>
+                                    <span class="bird-card-info-value">{{ bird.age }}</span>
+                                </div>
+                                <div class="bird-card-info-item">
+                                    <span class="bird-card-info-label">Gender</span>
+                                    <span class="bird-card-info-value">{{ bird.gender }}</span>
+                                </div>
+                                <div class="bird-card-info-item">
+                                    <span class="bird-card-info-label">Health</span>
+                                    <span class="bird-card-info-value">{{ bird.health_status }}</span>
+                                </div>
+                                <div class="bird-card-info-item">
+                                    <span class="bird-card-info-label">Location</span>
+                                    <span class="bird-card-info-value">{{ bird.location }}</span>
+                                </div>
+                            </div>
+                            
+                            {% if bird.type == 'sell' %}
+                                <div class="bird-card-price">${{ bird.price }}</div>
+                            {% endif %}
+                            
+                            <div class="bird-card-actions">
+                                <button class="btn btn-primary btn-view-details" data-bird-id="{{ bird.id }}">View Details</button>
+                                <button class="btn btn-outline btn-add-to-cart" data-bird-id="{{ bird.id }}">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="browse-all-btn">
+                <a href="/marketplace" class="btn btn-primary btn-lg">Browse All Birds</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Veterinary Services Section -->
+    <section class="vet-services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Veterinary Services</h2>
+                <p>Connect with certified and verified veterinarians who specialize in avian care. Find trusted professionals in your area.</p>
+            </div>
+
+            <div class="vet-cards-grid">
+                {% for vet in featured_vets %}
+                    <div class="vet-card" data-vet-id="{{ vet.id }}">
+                        <div class="vet-card-header">
+                            <div class="vet-card-avatar">
+                                {% if vet.avatar_url %}
+                                    <img src="{{ vet.avatar_url }}" alt="{{ vet.name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+                                {% else %}
+                                    🩺
+                                {% endif %}
+                            </div>
+                            <h3 class="vet-card-name">{{ vet.name }}</h3>
+                            <p class="vet-card-specialty">{{ vet.specialty }}</p>
+                        </div>
+                        
+                        <div class="vet-card-body">
+                            <div class="vet-card-rating">
+                                <span class="vet-card-stars">
+                                    {% for i in range(vet.rating|int) %}★{% endfor %}
+                                    {% if vet.rating % 1 != 0 %}½{% endif %}
+                                </span>
+                                <span>({{ vet.reviews_count }} reviews)</span>
+                            </div>
+                            
+                            <div class="vet-card-location">
+                                <span>📍</span>
+                                <span>{{ vet.location }}</span>
+                            </div>
+                            
+                            <div class="vet-card-services">
+                                {% for service in vet.services %}
+                                    <span class="vet-service-tag">{{ service }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            {% if vet.is_verified %}
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: var(--spacing-md); font-size: var(--font-size-sm); color: var(--color-success);">
+                                    <span>✓</span>
+                                    <span>Verified Professional</span>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="vet-card-actions">
+                                <button class="btn btn-primary btn-contact" data-vet-id="{{ vet.id }}">Contact</button>
+                                <button class="btn btn-outline btn-view-profile" data-vet-id="{{ vet.id }}">Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="browse-all-btn">
+                <a href="/vets" class="btn btn-primary btn-lg">Find More Vets</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Latest from Our Blog</h2>
+                <p>Stay informed with expert tips, care guides, and stories from our bird community.</p>
+            </div>
+
+            <div class="blog-posts-grid">
+                {% for post in featured_blog_posts %}
+                    <div class="blog-post-card" data-post-id="{{ post.id }}">
+                        {% if post.featured_image %}
+                            <div class="blog-post-image">
+                                <img src="{{ post.featured_image }}" alt="{{ post.title }}" loading="lazy" />
+                            </div>
+                        {% endif %}
+                        
+                        <div class="blog-post-body">
+                            <span class="blog-post-category">{{ post.category }}</span>
+                            <h3 class="blog-post-title">{{ post.title }}</h3>
+                            <p class="blog-post-excerpt">{{ post.excerpt }}</p>
+                            
+                            <div class="blog-post-meta">
+                                <div class="blog-post-author">
+                                    <div class="blog-post-avatar"></div>
+                                    <span>{{ post.author_name }}</span>
+                                </div>
+                                <span>{{ post.published_date.strftime('%b %d, %Y') }}</span>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="browse-all-btn">
+                <a href="/blog" class="btn btn-primary btn-lg">Read More Articles</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Join Our Community?</h2>
+            <p>Whether you're looking to buy, sell, rehome, or adopt, Avian Haven is the perfect platform for all your bird marketplace needs.</p>
+            <div class="cta-buttons">
+                <a href="/register?role=buyer" class="btn btn-outline">Sign Up as Buyer</a>
+                <a href="/register?role=seller" class="btn btn-outline">Become a Seller</a>
+                <a href="/register?role=vet" class="btn btn-outline">Join as Vet</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/homepage.js') }}"></script>
+{% endblock %}

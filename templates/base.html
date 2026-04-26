@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Avian Haven - Ethical Bird Marketplace for Buying, Selling, and Rehoming Birds" />
+    <meta property="og:title" content="Avian Haven - Bird Marketplace" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Ethical Bird Marketplace for Buying, Selling, and Rehoming Birds" />
+    
+    <title>{% block title %}Avian Haven - Bird Marketplace{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='imgs/theme/favicon.svg') }}" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/preloader.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}" />
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="bird-animation">
+                <div class="tree-branch">
+                    <div class="branch-line"></div>
+                    <div class="branch-knots">
+                        <div class="knot"></div>
+                        <div class="knot"></div>
+                        <div class="knot"></div>
+                        <div class="knot"></div>
+                    </div>
+                </div>
+                
+                <div class="bird-silhouette">
+                    <div class="bird-body"></div>
+                    <div class="bird-head"></div>
+                    <div class="bird-beak"></div>
+                    <div class="bird-eye"></div>
+                    <div class="bird-wing"></div>
+                    <div class="bird-tail"></div>
+                    
+                    <div class="whistle-notes">
+                        <div class="note"></div>
+                        <div class="note"></div>
+                        <div class="note"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preloader-text">
+                <span>L</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 9000;"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <!-- Header Top -->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-top-content">
+                    <div class="header-info">
+                        <a href="#about">About Us</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                    <div class="text-center" style="flex: 1;">
+                        <span style="font-size: 0.9rem; color: var(--color-primary);">Welcome to Avian Haven - Ethical Bird Marketplace</span>
+                    </div>
+                    <div class="header-info">
+                        <span>Call us: <strong>+1 (555) 123-4567</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header Main -->
+        <div class="header-main">
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: var(--spacing-lg);">
+                <!-- Logo -->
+                <a href="/" class="logo">
+                    <div class="logo-icon">🐦</div>
+                    <span>Avian Haven</span>
+                </a>
+
+                <!-- Search Bar -->
+                <form class="search-bar" action="/search" method="GET">
+                    <input type="text" name="q" placeholder="Search birds, vets, breeds..." />
+                    <button type="submit">🔍</button>
+                </form>
+
+                <!-- Header Actions -->
+                <div class="header-actions">
+                    <button id="theme-toggle" class="theme-toggle" title="Toggle Dark Mode">
+                        <span id="theme-icon">🌙</span>
+                    </button>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="/messages" class="header-action-item" title="Messages">
+                            <div class="header-action-icon">💬</div>
+                            {% if unread_messages > 0 %}
+                                <span class="header-action-badge">{{ unread_messages }}</span>
+                            {% endif %}
+                        </a>
+                        
+                        <a href="/cart" class="header-action-item" title="Cart">
+                            <div class="header-action-icon">🛒</div>
+                            {% if cart_count > 0 %}
+                                <span class="header-action-badge">{{ cart_count }}</span>
+                            {% endif %}
+                        </a>
+                        
+                        <a href="/account" class="header-action-item" title="My Account">
+                            <div class="header-action-icon">👤</div>
+                        </a>
+                        
+                        <a href="/logout" class="header-action-item" title="Logout">
+                            <div class="header-action-icon">🚪</div>
+                        </a>
+                    {% else %}
+                        <a href="/login" class="btn btn-outline btn-sm">Login</a>
+                        <a href="/register" class="btn btn-primary btn-sm">Sign Up</a>
+                    {% endif %}
+                    
+                    <button class="hamburger-menu" aria-label="Toggle menu">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/marketplace" class="nav-link">Marketplace</a>
+                        <ul class="nav-submenu">
+                            <li><a href="/marketplace?type=sell" class="nav-submenu-item">Buy Birds</a></li>
+                            <li><a href="/marketplace?type=rehome" class="nav-submenu-item">Rehome Birds</a></li>
+                            <li><a href="/marketplace?type=adopt" class="nav-submenu-item">Adopt Birds</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/vets" class="nav-link">Veterinary Services</a>
+                        <ul class="nav-submenu">
+                            <li><a href="/vets" class="nav-submenu-item">Find a Vet</a></li>
+                            <li><a href="/vets/appointments" class="nav-submenu-item">Book Appointment</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/blog" class="nav-link">Blog</a>
+                        <ul class="nav-submenu">
+                            <li><a href="/blog?category=care" class="nav-submenu-item">Bird Care</a></li>
+                            <li><a href="/blog?category=health" class="nav-submenu-item">Health Tips</a></li>
+                            <li><a href="/blog?category=breeds" class="nav-submenu-item">Breed Guides</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/seller-dashboard" class="nav-link">Sell</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Mobile Navigation -->
+        <nav class="mobile-nav">
+            <button class="mobile-nav-close">&times;</button>
+            <ul class="mobile-nav-menu">
+                <li class="mobile-nav-item">
+                    <a href="/" class="mobile-nav-link">Home</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/marketplace" class="mobile-nav-link">Marketplace</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/marketplace?type=rehome" class="mobile-nav-link">Rehome Birds</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/marketplace?type=adopt" class="mobile-nav-link">Adopt Birds</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/vets" class="mobile-nav-link">Veterinary Services</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/blog" class="mobile-nav-link">Blog</a>
+                </li>
+                <li class="mobile-nav-item">
+                    <a href="/seller-dashboard" class="mobile-nav-link">Sell</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- About Section -->
+                <div class="footer-section footer-about">
+                    <a href="/" class="footer-logo">
+                        <div class="footer-logo-icon">🐦</div>
+                        <span>Avian Haven</span>
+                    </a>
+                    <p class="footer-description">
+                        Your trusted platform for ethical bird trading, rehoming, and adoption. We connect bird lovers with veterinary services and ensure the highest standards of animal welfare.
+                    </p>
+                    <div class="social-links">
+                        <a href="#facebook" class="social-link" title="Facebook">f</a>
+                        <a href="#twitter" class="social-link" title="Twitter">𝕏</a>
+                        <a href="#instagram" class="social-link" title="Instagram">📷</a>
+                        <a href="#youtube" class="social-link" title="YouTube">▶</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">Quick Links</h3>
+                    <ul class="footer-section-list">
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/how-it-works">How It Works</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/press">Press</a></li>
+                    </ul>
+                </div>
+
+                <!-- Marketplace -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">Marketplace</h3>
+                    <ul class="footer-section-list">
+                        <li><a href="/marketplace">Browse Birds</a></li>
+                        <li><a href="/marketplace?type=rehome">Rehoming</a></li>
+                        <li><a href="/marketplace?type=adopt">Adoption</a></li>
+                        <li><a href="/seller-dashboard">Become a Seller</a></li>
+                        <li><a href="/vets">Find a Vet</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">Support</h3>
+                    <ul class="footer-section-list">
+                        <li><a href="/faq">FAQ</a></li>
+                        <li><a href="/help">Help Center</a></li>
+                        <li><a href="/report-abuse">Report Abuse</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="footer-section">
+                    <h3 class="footer-section-title">Stay Updated</h3>
+                    <p class="footer-description" style="margin-bottom: var(--spacing-md);">
+                        Subscribe to get updates on new birds, vet services, and bird care tips.
+                    </p>
+                    <form class="newsletter-form" action="/newsletter/subscribe" method="POST">
+                        <input type="email" name="email" placeholder="Enter your email" required />
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2026 Avian Haven. All rights reserved.
+                </p>
+                <div class="footer-links">
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/cookies">Cookie Policy</a>
+                    <a href="/accessibility">Accessibility</a>
+                </div>
+                <div class="payment-methods">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-icon">📱</div>
+                    <div class="payment-icon">🏦</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

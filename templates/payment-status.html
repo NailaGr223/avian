@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Status - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="max-width: 600px; margin: var(--spacing-2xl) auto;">
+            {% if payment.status == 'success' %}
+                <!-- Success State -->
+                <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md); text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: var(--spacing-lg); animation: bounce 0.6s;">✓</div>
+                    <h1 style="color: var(--color-success); margin-bottom: var(--spacing-md);">Payment Successful!</h1>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-2xl);">Your order has been confirmed and is being processed.</p>
+
+                    <!-- Order Details -->
+                    <div style="background-color: var(--color-light-gray); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); text-align: left;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg);">
+                            <div>
+                                <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Order Number</h4>
+                                <p style="margin: 0; font-weight: 700; font-size: var(--font-size-lg);">{{ payment.order_id }}</p>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Amount Paid</h4>
+                                <p style="margin: 0; font-weight: 700; font-size: var(--font-size-lg); color: var(--color-primary);">${{ payment.amount }}</p>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Payment Method</h4>
+                                <p style="margin: 0; font-weight: 600;">{{ payment.payment_method }}</p>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Transaction ID</h4>
+                                <p style="margin: 0; font-weight: 600; font-size: var(--font-size-sm);">{{ payment.transaction_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What's Next -->
+                    <div style="background-color: var(--color-green-very-light); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); text-align: left;">
+                        <h3 style="margin: 0 0 var(--spacing-md); color: var(--color-primary);">What's Next?</h3>
+                        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-gray-medium);">
+                            <li>You will receive a confirmation email shortly</li>
+                            <li>The seller will begin preparing your bird for shipment</li>
+                            <li>You'll receive tracking information within 24-48 hours</li>
+                            <li>You can track your order status in your dashboard</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: var(--spacing-lg);">
+                        <a href="/order-tracking/{{ payment.order_id }}" class="btn btn-primary" style="flex: 1;">Track Order</a>
+                        <a href="/buyer-dashboard/orders" class="btn btn-outline" style="flex: 1;">View Orders</a>
+                    </div>
+                </div>
+
+            {% elif payment.status == 'pending' %}
+                <!-- Pending State -->
+                <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md); text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: var(--spacing-lg); animation: spin 2s linear infinite;">⏳</div>
+                    <h1 style="color: var(--color-warning); margin-bottom: var(--spacing-md);">Payment Processing</h1>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">Your payment is being processed. This usually takes a few minutes.</p>
+                    <p style="color: var(--color-gray-medium); font-size: var(--font-size-sm);">Order ID: {{ payment.order_id }}</p>
+                    <button class="btn btn-primary" style="margin-top: var(--spacing-lg);" onclick="location.reload()">Refresh Status</button>
+                </div>
+
+            {% else %}
+                <!-- Failed State -->
+                <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-2xl); box-shadow: var(--shadow-md); text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: var(--spacing-lg);">✕</div>
+                    <h1 style="color: var(--color-danger); margin-bottom: var(--spacing-md);">Payment Failed</h1>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">{{ payment.error_message }}</p>
+
+                    <!-- Error Details -->
+                    <div style="background-color: #ffebee; border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); text-align: left;">
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-danger);">Error Details</h4>
+                        <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ payment.error_details }}</p>
+                    </div>
+
+                    <!-- Troubleshooting -->
+                    <div style="background-color: var(--color-light-gray); border-radius: var(--radius-md); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); text-align: left;">
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-primary);">Troubleshooting Tips</h4>
+                        <ul style="margin: 0; padding-left: var(--spacing-lg); color: var(--color-gray-medium); font-size: var(--font-size-sm);">
+                            <li>Check that your card details are correct</li>
+                            <li>Ensure you have sufficient funds</li>
+                            <li>Verify your billing address matches your card</li>
+                            <li>Try a different payment method</li>
+                            <li>Contact your bank if the issue persists</li>
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: var(--spacing-lg);">
+                        <a href="/checkout" class="btn btn-primary" style="flex: 1;">Try Again</a>
+                        <a href="/buyer-dashboard" class="btn btn-outline" style="flex: 1;">Back to Dashboard</a>
+                    </div>
+
+                    <!-- Support -->
+                    <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray);">
+                        <p style="color: var(--color-gray-medium); font-size: var(--font-size-sm);">Need help? <a href="/contact-support" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">Contact our support team</a></p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        // Auto-refresh for pending payments
+        {% if payment.status == 'pending' %}
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        {% endif %}
+    </script>
+{% endblock %}

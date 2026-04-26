@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}My Wishlist - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/additional-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="wishlist-container">
+            <!-- Header -->
+            <div class="wishlist-header">
+                <div>
+                    <h1 style="color: var(--color-primary); margin: 0;">My Wishlist</h1>
+                    <p style="color: var(--color-gray-medium); margin: var(--spacing-md) 0 0;">{{ wishlist_items|length }} bird(s) saved</p>
+                </div>
+                {% if wishlist_items %}
+                    <button class="btn btn-outline" onclick="clearWishlist()">Clear All</button>
+                {% endif %}
+            </div>
+
+            <!-- Wishlist Grid -->
+            {% if wishlist_items %}
+                <div class="wishlist-grid" id="wishlist-grid">
+                    {% for item in wishlist_items %}
+                        <div class="wishlist-item" data-bird-id="{{ item.bird_id }}">
+                            <!-- Image -->
+                            <div class="wishlist-item-image">
+                                <img src="{{ item.bird_image }}" alt="{{ item.bird_name }}" />
+                                <button class="wishlist-remove-btn" onclick="removeFromWishlist('{{ item.bird_id }}')">✕</button>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="wishlist-item-content">
+                                <h3 class="wishlist-item-name">{{ item.bird_name }}</h3>
+                                <p class="wishlist-item-breed">{{ item.breed_type }} • {{ item.age }} • {{ item.gender }}</p>
+                                <div class="wishlist-item-price">${{ item.price }}</div>
+
+                                <!-- Bird Info -->
+                                <div style="font-size: var(--font-size-xs); color: var(--color-gray-medium); margin-bottom: var(--spacing-md);">
+                                    <p style="margin: var(--spacing-sm) 0;">
+                                        <strong>Health:</strong> {{ item.health_status }}
+                                    </p>
+                                    <p style="margin: var(--spacing-sm) 0;">
+                                        <strong>Location:</strong> {{ item.location }}
+                                    </p>
+                                    <p style="margin: var(--spacing-sm) 0;">
+                                        <strong>Seller:</strong> {{ item.seller_name }}
+                                        {% if item.seller_verified %}
+                                            <span style="color: var(--color-success);">✓</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="wishlist-item-actions">
+                                    <a href="/bird-detail/{{ item.bird_id }}" class="btn btn-outline">View Details</a>
+                                    <button class="btn btn-primary" onclick="addToCart('{{ item.bird_id }}')">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div style="text-align: center; padding: var(--spacing-2xl); background-color: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                    <div style="font-size: 4rem; margin-bottom: var(--spacing-lg);">💔</div>
+                    <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">Your Wishlist is Empty</h2>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">Start exploring and save your favorite birds to your wishlist</p>
+                    <a href="/marketplace" class="btn btn-primary">Browse Birds</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function removeFromWishlist(birdId) {
+            if (confirm('Remove this bird from your wishlist?')) {
+                API.post(`/wishlist/remove/${birdId}`)
+                    .then(response => {
+                        document.querySelector(`[data-bird-id="${birdId}"]`).remove();
+                        Notification.success('Removed from wishlist');
+                        
+                        if (document.querySelectorAll('.wishlist-item').length === 0) {
+                            location.reload();
+                        }
+                    })
+                    .catch(error => {
+                        Notification.error('Failed to remove from wishlist');
+                    });
+            }
+        }
+
+        function addToCart(birdId) {
+            API.post(`/cart/add/${birdId}`)
+                .then(response => {
+                    Notification.success('Added to cart');
+                })
+                .catch(error => {
+                    Notification.error('Failed to add to cart');
+                });
+        }
+
+        function clearWishlist() {
+            if (confirm('Clear your entire wishlist? This action cannot be undone.')) {
+                API.post('/wishlist/clear')
+                    .then(response => {
+                        Notification.success('Wishlist cleared');
+                        location.reload();
+                    })
+                    .catch(error => {
+                        Notification.error('Failed to clear wishlist');
+                    });
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,665 @@
+/* ============================================
+   HOMEPAGE STYLES
+   ============================================ */
+
+/* Hero Carousel */
+.hero-carousel {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 100%);
+    margin-bottom: var(--spacing-3xl);
+}
+
+.carousel-container {
+    display: flex;
+    height: 100%;
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(45, 80, 22, 0.1) 0%, rgba(74, 157, 111, 0.1) 100%);
+    z-index: 1;
+}
+
+.carousel-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: var(--color-white);
+    max-width: 600px;
+    padding: var(--spacing-2xl);
+}
+
+.carousel-content h1 {
+    font-size: 3rem;
+    color: var(--color-white);
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-content p {
+    font-size: var(--font-size-lg);
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: var(--spacing-xl);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-buttons {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.carousel-buttons .btn {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-md) var(--spacing-xl);
+}
+
+.carousel-controls {
+    position: absolute;
+    bottom: var(--spacing-2xl);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: var(--spacing-md);
+    z-index: 3;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border: 2px solid transparent;
+}
+
+.carousel-indicator.active {
+    background-color: var(--color-white);
+    transform: scale(1.3);
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--color-white);
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    transition: all var(--transition-base);
+}
+
+.carousel-nav:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.carousel-prev {
+    left: var(--spacing-lg);
+}
+
+.carousel-next {
+    right: var(--spacing-lg);
+}
+
+/* Slide Backgrounds */
+.slide-sell {
+    background: linear-gradient(135deg, #2d5016 0%, #4a7c2c 100%);
+}
+
+.slide-rehome {
+    background: linear-gradient(135deg, #4a9d6f 0%, #2d7a4a 100%);
+}
+
+.slide-adopt {
+    background: linear-gradient(135deg, #8b7355 0%, #a89968 100%);
+}
+
+/* Featured Birds Section */
+.featured-birds-section {
+    padding: var(--spacing-3xl) 0;
+    background-color: var(--color-light-gray);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-3xl);
+}
+
+.section-header h2 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header p {
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-medium);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.bird-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.bird-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.bird-card-image {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    background-color: var(--color-light-gray);
+}
+
+.bird-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.bird-card:hover .bird-card-image img {
+    transform: scale(1.05);
+}
+
+.bird-card-badge {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    z-index: 2;
+}
+
+.bird-card-badge.rehome {
+    background-color: var(--color-green-light);
+}
+
+.bird-card-badge.adopt {
+    background-color: var(--color-warning);
+}
+
+.bird-card-body {
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.bird-card-breed {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-md);
+}
+
+.bird-card-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.bird-card-info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.bird-card-info-label {
+    color: var(--color-gray-medium);
+    font-weight: 600;
+}
+
+.bird-card-info-value {
+    color: var(--color-black);
+    margin-top: 2px;
+}
+
+.bird-card-price {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.bird-card-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: auto;
+}
+
+.bird-card-actions .btn {
+    flex: 1;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.browse-all-btn {
+    display: flex;
+    justify-content: center;
+}
+
+.browse-all-btn .btn {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--font-size-lg);
+}
+
+/* Vet Services Section */
+.vet-services-section {
+    padding: var(--spacing-3xl) 0;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f5f5f5 100%);
+}
+
+.vet-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.vet-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.vet-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.vet-card-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-green-light) 100%);
+    padding: var(--spacing-2xl);
+    text-align: center;
+    color: var(--color-white);
+}
+
+.vet-card-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    margin: 0 auto var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.vet-card-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+}
+
+.vet-card-specialty {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+}
+
+.vet-card-body {
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vet-card-rating {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.vet-card-stars {
+    color: var(--color-warning);
+}
+
+.vet-card-location {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+}
+
+.vet-card-services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.vet-service-tag {
+    background-color: var(--color-green-very-light);
+    color: var(--color-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.vet-card-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: auto;
+}
+
+.vet-card-actions .btn {
+    flex: 1;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+/* Blog Section */
+.blog-section {
+    padding: var(--spacing-3xl) 0;
+    background-color: var(--color-light-gray);
+}
+
+.blog-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.blog-post-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.blog-post-image {
+    width: 100%;
+    height: 200px;
+    background-color: var(--color-light-gray);
+    overflow: hidden;
+}
+
+.blog-post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-base);
+}
+
+.blog-post-card:hover .blog-post-image img {
+    transform: scale(1.05);
+}
+
+.blog-post-body {
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-post-category {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    width: fit-content;
+}
+
+.blog-post-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-tight);
+}
+
+.blog-post-excerpt {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-medium);
+    margin-bottom: var(--spacing-md);
+    line-height: var(--line-height-relaxed);
+    flex: 1;
+}
+
+.blog-post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-gray-medium);
+    border-top: 1px solid var(--color-gray);
+    padding-top: var(--spacing-md);
+}
+
+.blog-post-author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.blog-post-avatar {
+    width: 24px;
+    height: 24px;
+    background-color: var(--color-primary);
+    border-radius: var(--radius-full);
+}
+
+/* CTA Section */
+.cta-section {
+    padding: var(--spacing-3xl) 0;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-green-light) 100%);
+    color: var(--color-white);
+    text-align: center;
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-3xl) 0;
+}
+
+.cta-section h2 {
+    color: var(--color-white);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.cta-section p {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-buttons .btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-carousel {
+        height: 350px;
+    }
+    
+    .carousel-content h1 {
+        font-size: 2rem;
+    }
+    
+    .carousel-content p {
+        font-size: var(--font-size-base);
+    }
+    
+    .bird-cards-grid,
+    .vet-cards-grid,
+    .blog-posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .carousel-nav {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-size-lg);
+    }
+    
+    .carousel-prev {
+        left: var(--spacing-md);
+    }
+    
+    .carousel-next {
+        right: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-carousel {
+        height: 250px;
+    }
+    
+    .carousel-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .carousel-content p {
+        font-size: var(--font-size-sm);
+    }
+    
+    .carousel-buttons {
+        flex-direction: column;
+    }
+    
+    .bird-cards-grid,
+    .vet-cards-grid,
+    .blog-posts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .carousel-nav {
+        width: 36px;
+        height: 36px;
+        font-size: var(--font-size-base);
+    }
+    
+    .carousel-prev {
+        left: var(--spacing-sm);
+    }
+    
+    .carousel-next {
+        right: var(--spacing-sm);
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+    }
+    
+    .cta-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Homepage */
+[data-theme="dark"] .featured-birds-section,
+[data-theme="dark"] .blog-section {
+    background-color: var(--color-dark-surface);
+}
+
+[data-theme="dark"] .vet-services-section {
+    background: linear-gradient(135deg, var(--color-dark-surface) 0%, var(--color-dark-surface-light) 100%);
+}
+
+[data-theme="dark"] .bird-card,
+[data-theme="dark"] .vet-card,
+[data-theme="dark"] .blog-post-card {
+    background-color: var(--color-dark-surface-light);
+}
+
+[data-theme="dark"] .bird-card-image,
+[data-theme="dark"] .blog-post-image {
+    background-color: var(--color-dark-surface);
+}
+
+[data-theme="dark"] .vet-service-tag {
+    background-color: rgba(74, 157, 111, 0.2);
+    color: #7dd3b0;
+}
+
+[data-theme="dark"] .blog-post-meta {
+    border-top-color: var(--color-dark-surface);
+}

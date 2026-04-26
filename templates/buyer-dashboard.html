@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Buyer Dashboard - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <aside class="dashboard-sidebar">
+                <div class="dashboard-sidebar-header">
+                    <h2>My Account</h2>
+                    <p>{{ user.full_name }}</p>
+                </div>
+                <ul class="dashboard-nav">
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard" class="dashboard-nav-link active">
+                            <span class="dashboard-nav-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard/purchases" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🛍️</span>
+                            <span>My Purchases</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard/wishlist" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">❤️</span>
+                            <span>Wishlist</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard/orders" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">📦</span>
+                            <span>Orders</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/messages" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">💬</span>
+                            <span>Messages</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard/profile" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">👤</span>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/buyer-dashboard/settings" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/logout" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🚪</span>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <h1>Welcome back, {{ user.first_name }}!</h1>
+                    <div class="dashboard-header-actions">
+                        <a href="/marketplace" class="btn btn-primary">Browse Birds</a>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">🛍️</div>
+                        <div class="stat-content">
+                            <h3>Total Purchases</h3>
+                            <div class="stat-value">{{ user.total_purchases }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>Total Spent</h3>
+                            <div class="stat-value">${{ user.total_spent }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">❤️</div>
+                        <div class="stat-content">
+                            <h3>Wishlist Items</h3>
+                            <div class="stat-value">{{ user.wishlist_count }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <h3>Your Rating</h3>
+                            <div class="stat-value">{{ user.rating }}/5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Recent Orders</h2>
+                        <a href="/buyer-dashboard/orders" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+
+                    {% if recent_orders %}
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Bird</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                    <tr>
+                                        <td>#{{ order.id }}</td>
+                                        <td>{{ order.bird_name }}</td>
+                                        <td>{{ order.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td><span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></td>
+                                        <td>${{ order.total }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/order/{{ order.id }}" class="action-btn" title="View">👁️</a>
+                                                <a href="/track/{{ order.id }}" class="action-btn" title="Track">📍</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <h3 class="empty-state-title">No orders yet</h3>
+                            <p class="empty-state-text">Start shopping to see your orders here</p>
+                            <a href="/marketplace" class="btn btn-primary">Browse Birds</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Wishlist Preview -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Wishlist Preview</h2>
+                        <a href="/buyer-dashboard/wishlist" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+
+                    {% if wishlist_items %}
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                            {% for item in wishlist_items[:4] %}
+                                <div style="background-color: var(--color-light-gray); border-radius: var(--radius-lg); overflow: hidden; cursor: pointer;" onclick="window.location.href='/bird/{{ item.id }}'">
+                                    <img src="{{ item.image_url }}" alt="{{ item.breed }}" style="width: 100%; height: 150px; object-fit: cover;" />
+                                    <div style="padding: var(--spacing-md);">
+                                        <h4 style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-sm);">{{ item.breed }}</h4>
+                                        <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">${{ item.price }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❤️</div>
+                            <h3 class="empty-state-title">No items in wishlist</h3>
+                            <p class="empty-state-text">Add birds to your wishlist to save them for later</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                        <a href="/marketplace" class="btn btn-primary" style="text-align: center; padding: var(--spacing-lg);">
+                            <span style="display: block; font-size: 1.5rem; margin-bottom: var(--spacing-sm);">🔍</span>
+                            <span>Browse Marketplace</span>
+                        </a>
+                        <a href="/vets" class="btn btn-primary" style="text-align: center; padding: var(--spacing-lg);">
+                            <span style="display: block; font-size: 1.5rem; margin-bottom: var(--spacing-sm);">🩺</span>
+                            <span>Find Veterinarian</span>
+                        </a>
+                        <a href="/messages" class="btn btn-primary" style="text-align: center; padding: var(--spacing-lg);">
+                            <span style="display: block; font-size: 1.5rem; margin-bottom: var(--spacing-sm);">💬</span>
+                            <span>Contact Sellers</span>
+                        </a>
+                        <a href="/buyer-dashboard/profile" class="btn btn-primary" style="text-align: center; padding: var(--spacing-lg);">
+                            <span style="display: block; font-size: 1.5rem; margin-bottom: var(--spacing-sm);">👤</span>
+                            <span>Edit Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

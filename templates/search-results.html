@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="padding: var(--spacing-2xl) 0;">
+            <!-- Search Header -->
+            <div style="margin-bottom: var(--spacing-2xl);">
+                <h1 style="color: var(--color-primary); margin: 0 0 var(--spacing-md);">Search Results</h1>
+                <p style="color: var(--color-gray-medium); margin: 0;">
+                    {% if query %}
+                        Found {{ total_results }} result(s) for "<strong>{{ query }}</strong>"
+                    {% else %}
+                        Showing all birds
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div style="display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing-2xl); margin-bottom: var(--spacing-2xl);">
+                <!-- Search Bar -->
+                <div>
+                    <form onsubmit="performSearch(event)" style="display: flex; gap: var(--spacing-md);">
+                        <input type="text" id="search-query" value="{{ query }}" placeholder="Search birds by name, breed, location..." style="flex: 1; padding: var(--spacing-md); border: 2px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-base);" />
+                        <button type="submit" class="btn btn-primary" style="padding: var(--spacing-md) var(--spacing-lg);">Search</button>
+                    </form>
+                </div>
+
+                <!-- Sort Options -->
+                <select id="sort-by" onchange="updateSort()" style="padding: var(--spacing-md); border: 2px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-base);">
+                    <option value="newest">Newest First</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="rating">Highest Rated</option>
+                </select>
+            </div>
+
+            <!-- Results Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing-2xl);">
+                <!-- Birds Grid -->
+                {% if results %}
+                    <div class="marketplace-grid" id="results-grid">
+                        {% for bird in results %}
+                            <div class="bird-card">
+                                <!-- Image -->
+                                <div class="bird-card-image">
+                                    <img src="{{ bird.image_url }}" alt="{{ bird.name }}" />
+                                    {% if bird.is_featured %}
+                                        <span class="bird-card-badge">Featured</span>
+                                    {% endif %}
+                                    <button class="bird-card-wishlist" onclick="toggleWishlist('{{ bird.id }}')">
+                                        {% if bird.in_wishlist %}
+                                            ❤️
+                                        {% else %}
+                                            🤍
+                                        {% endif %}
+                                    </button>
+                                </div>
+
+                                <!-- Info -->
+                                <div class="bird-card-info">
+                                    <h3 class="bird-card-name">{{ bird.name }}</h3>
+                                    <p class="bird-card-breed">{{ bird.breed_type }}</p>
+
+                                    <!-- Details -->
+                                    <div class="bird-card-details">
+                                        <span>{{ bird.age }}</span>
+                                        <span>{{ bird.gender }}</span>
+                                        <span>{{ bird.location }}</span>
+                                    </div>
+
+                                    <!-- Health Status -->
+                                    <div style="background-color: var(--color-green-very-light); color: var(--color-primary); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: 600; text-align: center; margin: var(--spacing-md) 0;">
+                                        {{ bird.health_status }}
+                                    </div>
+
+                                    <!-- Price and Rating -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin: var(--spacing-md) 0;">
+                                        <span class="bird-card-price">${{ bird.price }}</span>
+                                        <div style="color: var(--color-warning);">
+                                            {% for i in range(bird.rating|int) %}★{% endfor %}
+                                            <span style="font-size: var(--font-size-xs); color: var(--color-gray-medium);">({{ bird.reviews_count }})</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Seller Info -->
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-gray-medium); margin-bottom: var(--spacing-md);">
+                                        By {{ bird.seller_name }}
+                                        {% if bird.seller_verified %}
+                                            <span style="color: var(--color-success);">✓</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div style="display: flex; gap: var(--spacing-md);">
+                                        <a href="/bird-detail/{{ bird.id }}" class="btn btn-outline" style="flex: 1; padding: var(--spacing-md); text-align: center;">View</a>
+                                        <button class="btn btn-primary" style="flex: 1; padding: var(--spacing-md);" onclick="addToCart('{{ bird.id }}')">Add to Cart</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- No Results -->
+                    <div style="text-align: center; padding: var(--spacing-2xl); background-color: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                        <div style="font-size: 4rem; margin-bottom: var(--spacing-lg);">🔍</div>
+                        <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">No Results Found</h2>
+                        <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">Try adjusting your search or filters</p>
+                        <a href="/marketplace" class="btn btn-primary">Browse All Birds</a>
+                    </div>
+                {% endif %}
+
+                <!-- Filters Sidebar -->
+                <aside style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); height: fit-content; position: sticky; top: 100px;">
+                    <h3 style="margin: 0 0 var(--spacing-lg); color: var(--color-primary);">Filters</h3>
+
+                    <!-- Breed Filter -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm);">Breed</label>
+                        <select onchange="updateFilters()" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);">
+                            <option value="">All Breeds</option>
+                            {% for breed in available_breeds %}
+                                <option value="{{ breed }}">{{ breed }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Age Filter -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm);">Age</label>
+                        <select onchange="updateFilters()" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);">
+                            <option value="">All Ages</option>
+                            <option value="baby">Baby (0-6 months)</option>
+                            <option value="young">Young (6-12 months)</option>
+                            <option value="adult">Adult (1-5 years)</option>
+                            <option value="senior">Senior (5+ years)</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range Filter -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm);">Price Range</label>
+                        <div style="display: flex; gap: var(--spacing-md);">
+                            <input type="number" placeholder="Min" id="price-min" style="flex: 1; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);" />
+                            <input type="number" placeholder="Max" id="price-max" style="flex: 1; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);" />
+                        </div>
+                    </div>
+
+                    <!-- Location Filter -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm);">Location</label>
+                        <input type="text" placeholder="City or Zip Code" id="location-filter" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); font-size: var(--font-size-sm);" />
+                    </div>
+
+                    <!-- Health Status Filter -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <label style="display: block; font-weight: 600; color: var(--color-primary); margin-bottom: var(--spacing-md); font-size: var(--font-size-sm);">Health Status</label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; margin-bottom: var(--spacing-md);">
+                            <input type="checkbox" onchange="updateFilters()" />
+                            <span style="font-size: var(--font-size-sm);">Excellent</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer; margin-bottom: var(--spacing-md);">
+                            <input type="checkbox" onchange="updateFilters()" />
+                            <span style="font-size: var(--font-size-sm);">Good</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                            <input type="checkbox" onchange="updateFilters()" />
+                            <span style="font-size: var(--font-size-sm);">Fair</span>
+                        </label>
+                    </div>
+
+                    <!-- Apply Filters Button -->
+                    <button class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-lg);" onclick="updateFilters()">Apply Filters</button>
+                </aside>
+            </div>
+
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+                <div style="display: flex; justify-content: center; gap: var(--spacing-md); margin-top: var(--spacing-2xl);">
+                    {% if current_page > 1 %}
+                        <a href="/search?q={{ query }}&page=1" class="btn btn-outline">First</a>
+                        <a href="/search?q={{ query }}&page={{ current_page - 1 }}" class="btn btn-outline">Previous</a>
+                    {% endif %}
+
+                    {% for page in range(max(1, current_page - 2), min(total_pages + 1, current_page + 3)) %}
+                        {% if page == current_page %}
+                            <button class="btn btn-primary" disabled>{{ page }}</button>
+                        {% else %}
+                            <a href="/search?q={{ query }}&page={{ page }}" class="btn btn-outline">{{ page }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if current_page < total_pages %}
+                        <a href="/search?q={{ query }}&page={{ current_page + 1 }}" class="btn btn-outline">Next</a>
+                        <a href="/search?q={{ query }}&page={{ total_pages }}" class="btn btn-outline">Last</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function performSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-query').value;
+            window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        }
+
+        function updateSort() {
+            const sort = document.getElementById('sort-by').value;
+            const query = new URLSearchParams(window.location.search).get('q');
+            window.location.href = `/search?q=${encodeURIComponent(query)}&sort=${sort}`;
+        }
+
+        function updateFilters() {
+            const breed = document.querySelector('select').value;
+            const query = new URLSearchParams(window.location.search).get('q');
+            window.location.href = `/search?q=${encodeURIComponent(query)}&breed=${breed}`;
+        }
+
+        function toggleWishlist(birdId) {
+            API.post(`/wishlist/toggle/${birdId}`)
+                .then(response => {
+                    location.reload();
+                })
+                .catch(error => {
+                    Notification.error('Failed to update wishlist');
+                });
+        }
+
+        function addToCart(birdId) {
+            API.post(`/cart/add/${birdId}`)
+                .then(response => {
+                    Notification.success('Added to cart');
+                })
+                .catch(error => {
+                    Notification.error('Failed to add to cart');
+                });
+        }
+    </script>
+{% endblock %}

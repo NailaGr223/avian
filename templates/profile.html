@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.full_name }} - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="padding: var(--spacing-2xl) 0;">
+            <!-- Profile Header -->
+            <div style="background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-green-light) 100%); border-radius: var(--radius-lg); padding: var(--spacing-2xl); color: var(--color-white); margin-bottom: var(--spacing-2xl);">
+                <div style="display: grid; grid-template-columns: 150px 1fr; gap: var(--spacing-2xl); align-items: center;">
+                    <div style="width: 150px; height: 150px; background-color: rgba(255, 255, 255, 0.2); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                        {{ profile_user.full_name[0] }}
+                    </div>
+                    <div>
+                        <h1 style="margin: 0 0 var(--spacing-md); font-size: var(--font-size-3xl);">{{ profile_user.full_name }}</h1>
+                        <p style="margin: 0 0 var(--spacing-md); opacity: 0.9;">
+                            {% if profile_user.user_type == 'seller' %}
+                                🏪 Seller
+                            {% elif profile_user.user_type == 'vet' %}
+                                🩺 Veterinarian
+                            {% else %}
+                                👤 Buyer
+                            {% endif %}
+                        </p>
+                        <div style="display: flex; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                            <div>
+                                <div style="font-size: var(--font-size-sm); opacity: 0.9;">Rating</div>
+                                <div style="font-size: var(--font-size-xl); font-weight: 700;">{{ profile_user.rating }}/5 ⭐</div>
+                            </div>
+                            <div>
+                                <div style="font-size: var(--font-size-sm); opacity: 0.9;">Reviews</div>
+                                <div style="font-size: var(--font-size-xl); font-weight: 700;">{{ profile_user.reviews_count }}</div>
+                            </div>
+                            {% if profile_user.user_type == 'seller' %}
+                                <div>
+                                    <div style="font-size: var(--font-size-sm); opacity: 0.9;">Sales</div>
+                                    <div style="font-size: var(--font-size-xl); font-weight: 700;">{{ profile_user.total_sales }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if profile_user.is_verified %}
+                            <span style="display: inline-block; background-color: rgba(255, 255, 255, 0.2); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 600;">✓ Verified</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div style="display: grid; grid-template-columns: 1fr 350px; gap: var(--spacing-2xl);">
+                <!-- Main Content -->
+                <div>
+                    <!-- About Section -->
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-bottom: var(--spacing-xl);">
+                        <h2 style="margin: 0 0 var(--spacing-lg); border-bottom: 2px solid var(--color-gray); padding-bottom: var(--spacing-lg);">About</h2>
+                        <p style="color: var(--color-gray-medium); line-height: var(--line-height-relaxed);">{{ profile_user.bio }}</p>
+                        
+                        {% if profile_user.user_type == 'seller' %}
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-lg); margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray);">
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Business Name</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.business_name }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Location</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.location }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Member Since</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.created_at|date.strftime('%b %d, %Y') }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Response Time</h4>
+                                    <p style="margin: 0; font-weight: 600;">Usually within 2 hours</p>
+                                </div>
+                            </div>
+                        {% elif profile_user.user_type == 'vet' %}
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-lg); margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--color-gray);">
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Clinic Name</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.clinic_name }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Specialization</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.specialization }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Location</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.location }}</p>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">License Number</h4>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.license_number }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Reviews Section -->
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md);">
+                        <h2 style="margin: 0 0 var(--spacing-lg); border-bottom: 2px solid var(--color-gray); padding-bottom: var(--spacing-lg);">Reviews ({{ profile_user.reviews_count }})</h2>
+                        
+                        {% if profile_user.reviews %}
+                            {% for review in profile_user.reviews %}
+                                <div style="padding: var(--spacing-lg); border-bottom: 1px solid var(--color-gray);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+                                        <div>
+                                            <h4 style="margin: 0; font-weight: 600;">{{ review.author_name }}</h4>
+                                            <div style="color: var(--color-warning); font-size: var(--font-size-sm);">
+                                                {% for i in range(review.rating) %}★{% endfor %}
+                                            </div>
+                                        </div>
+                                        <span style="color: var(--color-gray-medium); font-size: var(--font-size-sm);">{{ review.created_at|date.strftime('%b %d, %Y') }}</span>
+                                    </div>
+                                    <p style="margin: 0; color: var(--color-gray-medium);">{{ review.text }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div style="text-align: center; padding: var(--spacing-2xl);">
+                                <p style="color: var(--color-gray-medium);">No reviews yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <aside>
+                    <!-- Contact Card -->
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-bottom: var(--spacing-lg);">
+                        <h3 style="margin: 0 0 var(--spacing-lg);">Contact</h3>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                            <a href="tel:{{ profile_user.phone }}" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background-color: var(--color-light-gray); border-radius: var(--radius-md); text-decoration: none; color: var(--color-black); transition: all var(--transition-fast);" onmouseover="this.style.backgroundColor='var(--color-gray)'" onmouseout="this.style.backgroundColor='var(--color-light-gray)'">
+                                <span style="font-size: 1.5rem;">📞</span>
+                                <span>{{ profile_user.phone }}</span>
+                            </a>
+                            <a href="mailto:{{ profile_user.email }}" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background-color: var(--color-light-gray); border-radius: var(--radius-md); text-decoration: none; color: var(--color-black); transition: all var(--transition-fast);" onmouseover="this.style.backgroundColor='var(--color-gray)'" onmouseout="this.style.backgroundColor='var(--color-light-gray)'">
+                                <span style="font-size: 1.5rem;">📧</span>
+                                <span>Email</span>
+                            </a>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="contactUser('{{ profile_user.id }}')">Send Message</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Card -->
+                    <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-bottom: var(--spacing-lg);">
+                        <h3 style="margin: 0 0 var(--spacing-lg);">Stats</h3>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                            <div style="display: flex; justify-content: space-between; padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-gray);">
+                                <span style="color: var(--color-gray-medium);">Member Since</span>
+                                <strong>{{ profile_user.created_at|date.strftime('%b %d, %Y') }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-gray);">
+                                <span style="color: var(--color-gray-medium);">Response Rate</span>
+                                <strong>95%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--color-gray-medium);">Positive Feedback</span>
+                                <strong>98%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Button -->
+                    <button class="btn btn-outline" style="width: 100%;" onclick="reportUser('{{ profile_user.id }}')">⚠️ Report User</button>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function contactUser(userId) {
+            window.location.href = `/messages?user_id=${userId}`;
+        }
+
+        function reportUser(userId) {
+            window.location.href = `/report-abuse?user_id=${userId}`;
+        }
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

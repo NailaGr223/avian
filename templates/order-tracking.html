@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Track Order - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="tracking-container">
+            <!-- Header -->
+            <div class="tracking-header">
+                <div>
+                    <h1 style="margin: 0 0 var(--spacing-md);">Order #{{ order.id }}</h1>
+                    <p style="margin: 0; color: var(--color-gray-medium);">Ordered on {{ order.created_at|date.strftime('%b %d, %Y') }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: var(--font-size-sm); color: var(--color-gray-medium); margin-bottom: var(--spacing-md);">Status</div>
+                    <span class="status-badge {{ order.status|lower }}" style="font-size: var(--font-size-base);">{{ order.status }}</span>
+                </div>
+            </div>
+
+            <!-- Order Details -->
+            <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-bottom: var(--spacing-xl);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                    <div>
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Bird</h4>
+                        <p style="margin: 0; font-weight: 600;">{{ order.bird_name }}</p>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Seller</h4>
+                        <p style="margin: 0; font-weight: 600;">{{ order.seller_name }}</p>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Total Amount</h4>
+                        <p style="margin: 0; font-weight: 600; color: var(--color-primary);">${{ order.total }}</p>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Delivery Method</h4>
+                        <p style="margin: 0; font-weight: 600;">{{ order.delivery_method }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Timeline -->
+            <div class="tracking-timeline">
+                <!-- Order Placed -->
+                <div class="tracking-step completed">
+                    <div class="tracking-step-dot">✓</div>
+                    <div class="tracking-step-content">
+                        <div class="tracking-step-title">Order Placed</div>
+                        <div class="tracking-step-time">{{ order.created_at|date.strftime('%b %d, %Y at %I:%M %p') }}</div>
+                        <div class="tracking-step-description">Your order has been successfully placed and confirmed.</div>
+                    </div>
+                </div>
+
+                <!-- Processing -->
+                <div class="tracking-step {% if order.status in ['processing', 'shipped', 'delivered'] %}completed{% elif order.status == 'processing' %}active{% endif %}">
+                    <div class="tracking-step-dot">📦</div>
+                    <div class="tracking-step-content">
+                        <div class="tracking-step-title">Processing</div>
+                        <div class="tracking-step-time">{% if order.processing_date %}{{ order.processing_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-description">The seller is preparing your bird for shipment. Health checks and documentation are being completed.</div>
+                    </div>
+                </div>
+
+                <!-- Shipped -->
+                <div class="tracking-step {% if order.status in ['shipped', 'delivered'] %}completed{% elif order.status == 'shipped' %}active{% endif %}">
+                    <div class="tracking-step-dot">🚚</div>
+                    <div class="tracking-step-content">
+                        <div class="tracking-step-title">Shipped</div>
+                        <div class="tracking-step-time">{% if order.shipped_date %}{{ order.shipped_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-description">
+                            Your order has been shipped!
+                            {% if order.tracking_number %}
+                                <br />
+                                <strong>Tracking Number:</strong> {{ order.tracking_number }}
+                                <br />
+                                <a href="{{ order.tracking_url }}" target="_blank" style="color: var(--color-primary); text-decoration: none;">Track with carrier</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- In Transit -->
+                <div class="tracking-step {% if order.status == 'delivered' %}completed{% elif order.status == 'in_transit' %}active{% endif %}">
+                    <div class="tracking-step-dot">✈️</div>
+                    <div class="tracking-step-content">
+                        <div class="tracking-step-title">In Transit</div>
+                        <div class="tracking-step-time">{% if order.in_transit_date %}{{ order.in_transit_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-description">Your bird is on its way to you. Expected delivery is {{ order.estimated_delivery|date.strftime('%b %d, %Y') }}.</div>
+                    </div>
+                </div>
+
+                <!-- Delivered -->
+                <div class="tracking-step {% if order.status == 'delivered' %}completed{% endif %}">
+                    <div class="tracking-step-dot">🎉</div>
+                    <div class="tracking-step-content">
+                        <div class="tracking-step-title">Delivered</div>
+                        <div class="tracking-step-time">{% if order.delivered_date %}{{ order.delivered_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-description">Your bird has been delivered! Please inspect it and confirm receipt.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-top: var(--spacing-xl);">
+                <h3 style="margin: 0 0 var(--spacing-lg);">Shipping Address</h3>
+                <p style="margin: 0;">{{ order.shipping_address.full_name }}</p>
+                <p style="margin: 0;">{{ order.shipping_address.street }}</p>
+                <p style="margin: 0;">{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}</p>
+                <p style="margin: 0;">{{ order.shipping_address.country }}</p>
+                <p style="margin: var(--spacing-md) 0 0; color: var(--color-gray-medium); font-size: var(--font-size-sm);">
+                    Phone: {{ order.shipping_address.phone }}
+                </p>
+            </div>
+
+            <!-- Live Map -->
+            {% if order.status in ['shipped', 'in_transit'] %}
+                <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); margin-top: var(--spacing-xl);">
+                    <h3 style="margin: 0 0 var(--spacing-lg);">Live Tracking Map</h3>
+                    <div id="tracking-map" style="width: 100%; height: 400px; background-color: var(--color-light-gray); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">
+                        <p style="color: var(--color-gray-medium);">Map will load here (Google Maps integration)</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div style="display: flex; gap: var(--spacing-lg); margin-top: var(--spacing-xl);">
+                <a href="/buyer-dashboard/orders" class="btn btn-outline">Back to Orders</a>
+                {% if order.status == 'delivered' %}
+                    <a href="/review/{{ order.id }}" class="btn btn-primary">Leave Review</a>
+                {% endif %}
+                <button class="btn btn-outline" onclick="contactSeller('{{ order.seller_id }}')">Contact Seller</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function contactSeller(sellerId) {
+            window.location.href = `/messages?seller_id=${sellerId}`;
+        }
+
+        // Refresh tracking status every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+    <script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+{% endblock %}

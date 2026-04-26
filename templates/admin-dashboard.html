@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Sidebar Navigation -->
+            <aside class="dashboard-sidebar">
+                <div class="dashboard-sidebar-header">
+                    <h2>Admin Panel</h2>
+                    <p>System Administrator</p>
+                </div>
+                <ul class="dashboard-nav">
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard" class="dashboard-nav-link active">
+                            <span class="dashboard-nav-icon">📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/users" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">👥</span>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/birds" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🐦</span>
+                            <span>Birds</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/sellers" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🏪</span>
+                            <span>Sellers</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/vets" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🩺</span>
+                            <span>Veterinarians</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/reports" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">⚠️</span>
+                            <span>Abuse Reports</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/transactions" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">💳</span>
+                            <span>Transactions</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/analytics" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">📈</span>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/admin-dashboard/settings" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">⚙️</span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="dashboard-nav-item">
+                        <a href="/logout" class="dashboard-nav-link">
+                            <span class="dashboard-nav-icon">🚪</span>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Header -->
+                <div class="dashboard-header">
+                    <h1>System Dashboard</h1>
+                    <div class="dashboard-header-actions">
+                        <a href="/admin-dashboard/reports" class="btn btn-primary">View Reports</a>
+                    </div>
+                </div>
+
+                <!-- KPI Stats -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <h3>Total Users</h3>
+                            <div class="stat-value">{{ stats.total_users }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🐦</div>
+                        <div class="stat-content">
+                            <h3>Active Listings</h3>
+                            <div class="stat-value">{{ stats.active_listings }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3>Total Revenue</h3>
+                            <div class="stat-value">${{ stats.total_revenue }}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-content">
+                            <h3>Total Orders</h3>
+                            <div class="stat-value">{{ stats.total_orders }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Verifications -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Pending Verifications</h2>
+                        <a href="/admin-dashboard/sellers" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="background-color: var(--color-light-gray); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-warning);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">Seller Verifications</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary); margin-bottom: var(--spacing-md);">{{ stats.pending_seller_verifications }}</div>
+                            <a href="/admin-dashboard/sellers?status=pending" class="btn btn-sm btn-primary">Review</a>
+                        </div>
+                        <div style="background-color: var(--color-light-gray); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-warning);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">Vet Verifications</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary); margin-bottom: var(--spacing-md);">{{ stats.pending_vet_verifications }}</div>
+                            <a href="/admin-dashboard/vets?status=pending" class="btn btn-sm btn-primary">Review</a>
+                        </div>
+                        <div style="background-color: var(--color-light-gray); padding: var(--spacing-lg); border-radius: var(--radius-md); border-left: 4px solid var(--color-danger);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">Abuse Reports</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary); margin-bottom: var(--spacing-md);">{{ stats.pending_reports }}</div>
+                            <a href="/admin-dashboard/reports" class="btn btn-sm btn-primary">Review</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Recent Users</h2>
+                        <a href="/admin-dashboard/users" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+
+                    {% if recent_users %}
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in recent_users %}
+                                    <tr>
+                                        <td>{{ user.full_name }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.user_type }}</td>
+                                        <td>{{ user.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td><span class="status-badge {{ 'active' if user.is_active else 'rejected' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin-dashboard/user/{{ user.id }}" class="action-btn" title="View">👁️</a>
+                                                <button class="action-btn" title="Edit" onclick="editUser('{{ user.id }}')">✏️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">👥</div>
+                            <h3 class="empty-state-title">No users</h3>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Recent Abuse Reports -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>Recent Abuse Reports</h2>
+                        <a href="/admin-dashboard/reports" class="btn btn-outline btn-sm">View All</a>
+                    </div>
+
+                    {% if recent_reports %}
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Reported Item</th>
+                                    <th>Reason</th>
+                                    <th>Reported By</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in recent_reports %}
+                                    <tr>
+                                        <td>{{ report.item_type }}: {{ report.item_name }}</td>
+                                        <td>{{ report.reason }}</td>
+                                        <td>{{ report.reporter_name }}</td>
+                                        <td>{{ report.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td><span class="status-badge {{ report.status|lower }}">{{ report.status }}</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="/admin-dashboard/report/{{ report.id }}" class="action-btn" title="View">👁️</a>
+                                                <button class="action-btn" title="Resolve" onclick="resolveReport('{{ report.id }}')">✓</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✓</div>
+                            <h3 class="empty-state-title">No reports</h3>
+                            <p class="empty-state-text">All systems are clean</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- System Health -->
+                <div class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2>System Health</h2>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">Database Status</h4>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                                <span style="font-size: 1.5rem; color: var(--color-success);">●</span>
+                                <span>Healthy</span>
+                            </div>
+                        </div>
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">API Status</h4>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                                <span style="font-size: 1.5rem; color: var(--color-success);">●</span>
+                                <span>Operational</span>
+                            </div>
+                        </div>
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md);">
+                            <h4 style="margin: 0 0 var(--spacing-md);">Storage Usage</h4>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                                <span style="font-size: 1.5rem; color: var(--color-warning);">●</span>
+                                <span>{{ stats.storage_usage }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function editUser(userId) {
+            window.location.href = `/admin-dashboard/user/${userId}/edit`;
+        }
+
+        function resolveReport(reportId) {
+            if (confirm('Mark this report as resolved?')) {
+                API.post(`/admin-dashboard/report/${reportId}/resolve`, {})
+                    .then(response => {
+                        Notification.success('Report resolved');
+                        location.reload();
+                    })
+                    .catch(error => {
+                        Notification.error('Failed to resolve report');
+                    });
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

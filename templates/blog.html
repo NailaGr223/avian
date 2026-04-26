@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/additional-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="blog-container">
+            <!-- Blog Header -->
+            <div class="blog-header">
+                <h1>Avian Haven Blog</h1>
+                <p>Expert insights, care tips, and stories from the bird community</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="blog-search-bar">
+                <input type="text" class="blog-search-input" placeholder="Search articles..." id="blog-search" />
+                <button class="btn btn-primary" onclick="searchBlog()">Search</button>
+            </div>
+
+            <!-- Blog Content -->
+            <div class="blog-content">
+                <!-- Blog Posts Grid -->
+                <div>
+                    <div class="blog-posts" id="blog-posts">
+                        {% for post in blog_posts %}
+                            <article class="blog-post-card">
+                                <div class="blog-post-image">
+                                    <img src="{{ post.image_url }}" alt="{{ post.title }}" />
+                                </div>
+                                <div class="blog-post-content">
+                                    <span class="blog-post-category">{{ post.category }}</span>
+                                    <h3 class="blog-post-title">{{ post.title }}</h3>
+                                    <p class="blog-post-excerpt">{{ post.excerpt }}</p>
+                                    <div class="blog-post-meta">
+                                        <span>{{ post.created_at|date.strftime('%b %d, %Y') }}</span>
+                                        <a href="/blog/{{ post.id }}" class="blog-post-read-more">Read More →</a>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+
+                    {% if not blog_posts %}
+                        <div style="text-align: center; padding: var(--spacing-2xl); background-color: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                            <div style="font-size: 3rem; margin-bottom: var(--spacing-lg);">📚</div>
+                            <h3 style="color: var(--color-primary);">No Articles Found</h3>
+                            <p style="color: var(--color-gray-medium);">Try a different search term</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Pagination -->
+                    {% if total_pages > 1 %}
+                        <div style="display: flex; justify-content: center; gap: var(--spacing-md); margin-top: var(--spacing-2xl);">
+                            {% if current_page > 1 %}
+                                <a href="/blog?page=1" class="btn btn-outline">First</a>
+                                <a href="/blog?page={{ current_page - 1 }}" class="btn btn-outline">Previous</a>
+                            {% endif %}
+
+                            {% for page in range(max(1, current_page - 2), min(total_pages + 1, current_page + 3)) %}
+                                {% if page == current_page %}
+                                    <button class="btn btn-primary" disabled>{{ page }}</button>
+                                {% else %}
+                                    <a href="/blog?page={{ page }}" class="btn btn-outline">{{ page }}</a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if current_page < total_pages %}
+                                <a href="/blog?page={{ current_page + 1 }}" class="btn btn-outline">Next</a>
+                                <a href="/blog?page={{ total_pages }}" class="btn btn-outline">Last</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="blog-sidebar">
+                    <!-- Categories Widget -->
+                    <div class="blog-sidebar-widget">
+                        <h4 class="blog-sidebar-title">Categories</h4>
+                        <div class="blog-categories">
+                            <div class="blog-category-item" onclick="filterByCategory('care')">
+                                <span>Bird Care</span>
+                                <span style="font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ categories.care }}</span>
+                            </div>
+                            <div class="blog-category-item" onclick="filterByCategory('health')">
+                                <span>Health & Wellness</span>
+                                <span style="font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ categories.health }}</span>
+                            </div>
+                            <div class="blog-category-item" onclick="filterByCategory('nutrition')">
+                                <span>Nutrition</span>
+                                <span style="font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ categories.nutrition }}</span>
+                            </div>
+                            <div class="blog-category-item" onclick="filterByCategory('behavior')">
+                                <span>Behavior & Training</span>
+                                <span style="font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ categories.behavior }}</span>
+                            </div>
+                            <div class="blog-category-item" onclick="filterByCategory('stories')">
+                                <span>Success Stories</span>
+                                <span style="font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ categories.stories }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Posts Widget -->
+                    <div class="blog-sidebar-widget">
+                        <h4 class="blog-sidebar-title">Recent Posts</h4>
+                        <div class="blog-recent-posts">
+                            {% for post in recent_posts %}
+                                <div class="blog-recent-item">
+                                    <a href="/blog/{{ post.id }}" style="text-decoration: none;">
+                                        <div class="blog-recent-title">{{ post.title }}</div>
+                                        <div class="blog-recent-date">{{ post.created_at|date.strftime('%b %d, %Y') }}</div>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Widget -->
+                    <div class="blog-sidebar-widget">
+                        <h4 class="blog-sidebar-title">Newsletter</h4>
+                        <p style="font-size: var(--font-size-sm); color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">Subscribe to get the latest bird care tips delivered to your inbox.</p>
+                        <form onsubmit="subscribeNewsletter(event)">
+                            <input type="email" placeholder="Your email" style="width: 100%; padding: var(--spacing-md); border: 1px solid var(--color-gray); border-radius: var(--radius-md); margin-bottom: var(--spacing-md);" required />
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Subscribe</button>
+                        </form>
+                    </div>
+
+                    <!-- Tags Widget -->
+                    <div class="blog-sidebar-widget">
+                        <h4 class="blog-sidebar-title">Popular Tags</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md);">
+                            {% for tag in popular_tags %}
+                                <a href="/blog?tag={{ tag }}" style="display: inline-block; background-color: var(--color-green-very-light); color: var(--color-primary); padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); font-size: var(--font-size-xs); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.backgroundColor='var(--color-primary)'; this.style.color='var(--color-white)'" onmouseout="this.style.backgroundColor='var(--color-green-very-light)'; this.style.color='var(--color-primary)'">#{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchBlog() {
+            const query = document.getElementById('blog-search').value;
+            if (query) {
+                window.location.href = `/blog?search=${encodeURIComponent(query)}`;
+            }
+        }
+
+        function filterByCategory(category) {
+            window.location.href = `/blog?category=${category}`;
+        }
+
+        function subscribeNewsletter(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            
+            API.post('/newsletter/subscribe', { email: email })
+                .then(response => {
+                    Notification.success('Successfully subscribed to newsletter!');
+                    event.target.reset();
+                })
+                .catch(error => {
+                    Notification.error('Failed to subscribe. Please try again.');
+                });
+        }
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/blog.js') }}"></script>
+{% endblock %}

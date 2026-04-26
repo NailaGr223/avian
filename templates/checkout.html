@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="checkout-container">
+            <!-- Main Checkout Form -->
+            <div class="checkout-main">
+                <!-- Shipping Information -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Shipping Information</h3>
+                    <form class="checkout-form" id="shipping-form">
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">Full Name</label>
+                            <input type="text" class="checkout-form-input" name="full_name" value="{{ user.full_name }}" required />
+                        </div>
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">Email</label>
+                            <input type="email" class="checkout-form-input" name="email" value="{{ user.email }}" required />
+                        </div>
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">Phone</label>
+                            <input type="tel" class="checkout-form-input" name="phone" value="{{ user.phone }}" required />
+                        </div>
+                        <div class="checkout-form-group checkout-form-full">
+                            <label class="checkout-form-label">Street Address</label>
+                            <input type="text" class="checkout-form-input" name="address" placeholder="123 Main Street" required />
+                        </div>
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">City</label>
+                            <input type="text" class="checkout-form-input" name="city" required />
+                        </div>
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">State/Province</label>
+                            <input type="text" class="checkout-form-input" name="state" required />
+                        </div>
+                        <div class="checkout-form-group">
+                            <label class="checkout-form-label">ZIP/Postal Code</label>
+                            <input type="text" class="checkout-form-input" name="zip_code" required />
+                        </div>
+                        <div class="checkout-form-group checkout-form-full">
+                            <label class="checkout-form-label">Country</label>
+                            <input type="text" class="checkout-form-input" name="country" required />
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Delivery Options -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Delivery Options</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                        <div style="padding: var(--spacing-lg); border: 2px solid var(--color-gray); border-radius: var(--radius-md); cursor: pointer;" onclick="selectDelivery('standard')">
+                            <h4 style="margin: 0 0 var(--spacing-md);">📦 Standard Delivery</h4>
+                            <p style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">5-7 business days</p>
+                            <p style="margin: 0; font-weight: 700; color: var(--color-primary);">$25.00</p>
+                        </div>
+                        <div style="padding: var(--spacing-lg); border: 2px solid var(--color-gray); border-radius: var(--radius-md); cursor: pointer;" onclick="selectDelivery('express')">
+                            <h4 style="margin: 0 0 var(--spacing-md);">🚚 Express Delivery</h4>
+                            <p style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">2-3 business days</p>
+                            <p style="margin: 0; font-weight: 700; color: var(--color-primary);">$50.00</p>
+                        </div>
+                        <div style="padding: var(--spacing-lg); border: 2px solid var(--color-gray); border-radius: var(--radius-md); cursor: pointer;" onclick="selectDelivery('overnight')">
+                            <h4 style="margin: 0 0 var(--spacing-md);">✈️ Overnight Delivery</h4>
+                            <p style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Next business day</p>
+                            <p style="margin: 0; font-weight: 700; color: var(--color-primary);">$100.00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="checkout-section">
+                    <h3 class="checkout-section-title">Payment Method</h3>
+                    <div class="checkout-tabs">
+                        <button class="checkout-tab active" onclick="switchPaymentMethod('card')">Credit Card</button>
+                        <button class="checkout-tab" onclick="switchPaymentMethod('mpesa')">M-Pesa</button>
+                        <button class="checkout-tab" onclick="switchPaymentMethod('airtel')">Airtel Money</button>
+                        <button class="checkout-tab" onclick="switchPaymentMethod('paypal')">PayPal</button>
+                    </div>
+
+                    <!-- Credit Card -->
+                    <div class="checkout-tab-content active" id="card-content">
+                        <form class="checkout-form" id="card-form">
+                            <div class="checkout-form-group checkout-form-full">
+                                <label class="checkout-form-label">Cardholder Name</label>
+                                <input type="text" class="checkout-form-input" name="cardholder_name" required />
+                            </div>
+                            <div class="checkout-form-group checkout-form-full">
+                                <label class="checkout-form-label">Card Number</label>
+                                <input type="text" class="checkout-form-input" name="card_number" placeholder="1234 5678 9012 3456" required />
+                            </div>
+                            <div class="checkout-form-group">
+                                <label class="checkout-form-label">Expiry Date</label>
+                                <input type="text" class="checkout-form-input" name="expiry_date" placeholder="MM/YY" required />
+                            </div>
+                            <div class="checkout-form-group">
+                                <label class="checkout-form-label">CVV</label>
+                                <input type="text" class="checkout-form-input" name="cvv" placeholder="123" required />
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- M-Pesa -->
+                    <div class="checkout-tab-content" id="mpesa-content">
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md); text-align: center;">
+                            <h4 style="margin: 0 0 var(--spacing-md);">📱 M-Pesa Payment</h4>
+                            <p style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium);">You will receive a prompt on your phone to complete the payment</p>
+                            <input type="tel" class="checkout-form-input" placeholder="Enter your M-Pesa number" style="margin-bottom: var(--spacing-md);" />
+                            <button class="btn btn-primary" style="width: 100%;">Proceed with M-Pesa</button>
+                        </div>
+                    </div>
+
+                    <!-- Airtel Money -->
+                    <div class="checkout-tab-content" id="airtel-content">
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md); text-align: center;">
+                            <h4 style="margin: 0 0 var(--spacing-md);">📱 Airtel Money Payment</h4>
+                            <p style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium);">You will receive a prompt on your phone to complete the payment</p>
+                            <input type="tel" class="checkout-form-input" placeholder="Enter your Airtel number" style="margin-bottom: var(--spacing-md);" />
+                            <button class="btn btn-primary" style="width: 100%;">Proceed with Airtel Money</button>
+                        </div>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div class="checkout-tab-content" id="paypal-content">
+                        <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md); text-align: center;">
+                            <h4 style="margin: 0 0 var(--spacing-md);">💳 PayPal Payment</h4>
+                            <p style="margin: 0 0 var(--spacing-md); color: var(--color-gray-medium);">You will be redirected to PayPal to complete the payment securely</p>
+                            <button class="btn btn-primary" style="width: 100%;">Proceed to PayPal</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions -->
+                <div style="padding: var(--spacing-lg); background-color: var(--color-light-gray); border-radius: var(--radius-md);">
+                    <label style="display: flex; align-items: center; gap: var(--spacing-md); cursor: pointer;">
+                        <input type="checkbox" id="terms-agree" required />
+                        <span>I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <aside class="checkout-summary">
+                <h3 class="checkout-summary-title">Order Summary</h3>
+
+                {% for item in cart_items %}
+                    <div class="checkout-item">
+                        <div class="checkout-item-image">
+                            <img src="{{ item.image_url }}" alt="{{ item.breed }}" />
+                        </div>
+                        <div class="checkout-item-details">
+                            <div class="checkout-item-name">{{ item.breed }}</div>
+                            <div style="font-size: var(--font-size-sm); color: var(--color-gray-medium); margin-bottom: var(--spacing-sm);">Qty: {{ item.quantity }}</div>
+                            <div class="checkout-item-price">${{ item.price * item.quantity }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="checkout-summary-divider"></div>
+
+                <div class="checkout-summary-row">
+                    <span>Subtotal</span>
+                    <span>${{ subtotal }}</span>
+                </div>
+
+                <div class="checkout-summary-row">
+                    <span>Delivery</span>
+                    <span id="delivery-cost">$25.00</span>
+                </div>
+
+                <div class="checkout-summary-row">
+                    <span>Tax</span>
+                    <span>${{ tax }}</span>
+                </div>
+
+                <div class="checkout-summary-divider"></div>
+
+                <div class="checkout-summary-total">
+                    <span>Total</span>
+                    <span id="total-amount">${{ total }}</span>
+                </div>
+
+                <div class="checkout-summary-actions">
+                    <button class="btn btn-primary" onclick="completeCheckout()">Complete Purchase</button>
+                    <a href="/marketplace" class="btn btn-outline">Continue Shopping</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        function selectDelivery(type) {
+            const costs = { standard: 25, express: 50, overnight: 100 };
+            document.getElementById('delivery-cost').textContent = `$${costs[type]}.00`;
+            updateTotal();
+        }
+
+        function switchPaymentMethod(method) {
+            document.querySelectorAll('.checkout-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.checkout-tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${method}-content`).classList.add('active');
+        }
+
+        function updateTotal() {
+            // Update total calculation
+        }
+
+        function completeCheckout() {
+            if (!document.getElementById('terms-agree').checked) {
+                Notification.error('Please agree to the terms and conditions');
+                return;
+            }
+
+            const formData = new FormData(document.getElementById('shipping-form'));
+            
+            API.post('/checkout/process', Object.fromEntries(formData))
+                .then(response => {
+                    window.location.href = `/payment-status/${response.order_id}`;
+                })
+                .catch(error => {
+                    Notification.error('Failed to process checkout');
+                });
+        }
+    </script>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}

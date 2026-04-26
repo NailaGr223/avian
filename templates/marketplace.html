@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Bird Marketplace - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="marketplace-container">
+            <!-- Sidebar Filters -->
+            <aside class="marketplace-sidebar">
+                <!-- Type Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Listing Type</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="type-sell" name="type" value="sell" />
+                        <label for="type-sell">For Sale</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="type-rehome" name="type" value="rehome" />
+                        <label for="type-rehome">Rehoming</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="type-adopt" name="type" value="adopt" />
+                        <label for="type-adopt">Adoption</label>
+                    </div>
+                </div>
+
+                <!-- Breed Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Breed</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-parrot" name="breed" value="parrot" />
+                        <label for="breed-parrot">Parrot</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-cockatiel" name="breed" value="cockatiel" />
+                        <label for="breed-cockatiel">Cockatiel</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-budgie" name="breed" value="budgie" />
+                        <label for="breed-budgie">Budgie</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-canary" name="breed" value="canary" />
+                        <label for="breed-canary">Canary</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-finch" name="breed" value="finch" />
+                        <label for="breed-finch">Finch</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="breed-other" name="breed" value="other" />
+                        <label for="breed-other">Other</label>
+                    </div>
+                </div>
+
+                <!-- Age Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Age</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="age-baby" name="age" value="baby" />
+                        <label for="age-baby">Baby (0-6 months)</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="age-young" name="age" value="young" />
+                        <label for="age-young">Young (6-2 years)</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="age-adult" name="age" value="adult" />
+                        <label for="age-adult">Adult (2-10 years)</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="age-senior" name="age" value="senior" />
+                        <label for="age-senior">Senior (10+ years)</label>
+                    </div>
+                </div>
+
+                <!-- Health Status Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Health Status</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="health-excellent" name="health_status" value="excellent" />
+                        <label for="health-excellent">Excellent</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="health-good" name="health_status" value="good" />
+                        <label for="health-good">Good</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="health-fair" name="health_status" value="fair" />
+                        <label for="health-fair">Fair</label>
+                    </div>
+                </div>
+
+                <!-- Price Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Price Range</h3>
+                    <div class="filter-range">
+                        <input type="number" name="price_min" placeholder="Min" min="0" />
+                        <span>to</span>
+                        <input type="number" name="price_max" placeholder="Max" min="0" />
+                    </div>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-title">Location</h3>
+                    <input type="text" name="location" class="form-control" placeholder="City or State" style="margin-bottom: var(--spacing-md);" />
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="filter-buttons">
+                    <button class="btn btn-primary" onclick="MarketplaceFilters.applyFilters()">Apply Filters</button>
+                    <button class="btn btn-outline" onclick="location.reload()">Reset</button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="marketplace-main">
+                <!-- Header -->
+                <div class="marketplace-header">
+                    <h1 class="marketplace-title">Browse Birds</h1>
+                    <div class="marketplace-controls">
+                        <div class="view-toggle">
+                            <button data-view="grid" class="active" title="Grid View">⊞</button>
+                            <button data-view="list" title="List View">≡</button>
+                        </div>
+                        <select class="sort-select">
+                            <option value="">Sort by</option>
+                            <option value="newest">Newest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="popular">Most Popular</option>
+                            <option value="rating">Highest Rated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bird Listings Grid -->
+                <div class="bird-listings-grid">
+                    {% for bird in birds %}
+                        <div class="bird-listing-card" data-bird-id="{{ bird.id }}">
+                            <div class="bird-listing-image">
+                                <img src="{{ bird.image_url }}" alt="{{ bird.breed }}" loading="lazy" />
+                                <div class="bird-listing-badges">
+                                    {% if bird.is_verified %}
+                                        <span class="bird-listing-badge verified">✓ Verified</span>
+                                    {% endif %}
+                                    {% if bird.is_featured %}
+                                        <span class="bird-listing-badge featured">Featured</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="bird-listing-body">
+                                <h3 class="bird-listing-title">{{ bird.breed }}</h3>
+                                <p class="bird-listing-breed">{{ bird.species }}</p>
+                                
+                                <div class="bird-listing-details">
+                                    <div class="bird-listing-detail">
+                                        <span class="bird-listing-detail-label">Age</span>
+                                        <span class="bird-listing-detail-value">{{ bird.age }}</span>
+                                    </div>
+                                    <div class="bird-listing-detail">
+                                        <span class="bird-listing-detail-label">Gender</span>
+                                        <span class="bird-listing-detail-value">{{ bird.gender }}</span>
+                                    </div>
+                                    <div class="bird-listing-detail">
+                                        <span class="bird-listing-detail-label">Health</span>
+                                        <span class="bird-listing-detail-value">{{ bird.health_status }}</span>
+                                    </div>
+                                    <div class="bird-listing-detail">
+                                        <span class="bird-listing-detail-label">Stock</span>
+                                        <span class="bird-listing-detail-value">{{ bird.quantity_available }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="bird-listing-location">
+                                    <span>📍</span>
+                                    <span>{{ bird.location }}</span>
+                                </div>
+                                
+                                {% if bird.price %}
+                                    <div class="bird-listing-price">${{ bird.price }}</div>
+                                {% endif %}
+                                
+                                <div class="bird-listing-seller">
+                                    <div class="bird-listing-seller-avatar">{{ bird.seller_name[0] }}</div>
+                                    <div class="bird-listing-seller-info">
+                                        <div class="bird-listing-seller-name">{{ bird.seller_name }}</div>
+                                        <div class="bird-listing-seller-rating">⭐ {{ bird.seller_rating }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bird-listing-actions">
+                                    <button class="btn btn-primary btn-view" data-bird-id="{{ bird.id }}">View</button>
+                                    <button class="btn btn-outline btn-cart" data-bird-id="{{ bird.id }}">Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                    <div class="pagination">
+                        {% if current_page > 1 %}
+                            <a href="?page=1">First</a>
+                            <a href="?page={{ current_page - 1 }}">Previous</a>
+                        {% endif %}
+                        
+                        {% for page_num in range(max(1, current_page - 2), min(total_pages + 1, current_page + 3)) %}
+                            {% if page_num == current_page %}
+                                <button class="active" disabled>{{ page_num }}</button>
+                            {% else %}
+                                <a href="?page={{ page_num }}">{{ page_num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if current_page < total_pages %}
+                            <a href="?page={{ current_page + 1 }}">Next</a>
+                            <a href="?page={{ total_pages }}">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/marketplace.js') }}"></script>
+{% endblock %}

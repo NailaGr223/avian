@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Order History - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/supporting-pages.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="padding: var(--spacing-2xl) 0;">
+            <!-- Header -->
+            <div style="margin-bottom: var(--spacing-2xl);">
+                <h1 style="color: var(--color-primary); margin: 0 0 var(--spacing-md);">Order History</h1>
+                <p style="color: var(--color-gray-medium); margin: 0;">Track and manage all your orders</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); border-bottom: 2px solid var(--color-gray); overflow-x: auto;">
+                <button class="btn btn-outline" onclick="filterOrders('all')" style="border: none; border-bottom: 3px solid var(--color-primary); border-radius: 0; padding: var(--spacing-md) 0;">All Orders</button>
+                <button class="btn btn-outline" onclick="filterOrders('pending')" style="border: none; border-radius: 0; padding: var(--spacing-md) 0;">Pending</button>
+                <button class="btn btn-outline" onclick="filterOrders('shipped')" style="border: none; border-radius: 0; padding: var(--spacing-md) 0;">Shipped</button>
+                <button class="btn btn-outline" onclick="filterOrders('delivered')" style="border: none; border-radius: 0; padding: var(--spacing-md) 0;">Delivered</button>
+                <button class="btn btn-outline" onclick="filterOrders('cancelled')" style="border: none; border-radius: 0; padding: var(--spacing-md) 0;">Cancelled</button>
+            </div>
+
+            <!-- Orders List -->
+            {% if orders %}
+                <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);" id="orders-list">
+                    {% for order in orders %}
+                        <div style="background-color: var(--color-white); border-radius: var(--radius-lg); padding: var(--spacing-lg); box-shadow: var(--shadow-md); border-left: 4px solid var(--color-primary);">
+                            <!-- Order Header -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg); padding-bottom: var(--spacing-lg); border-bottom: 1px solid var(--color-gray);">
+                                <div>
+                                    <p style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-gray-medium);">ORDER ID</p>
+                                    <p style="margin: 0; font-weight: 700; font-size: var(--font-size-lg);">{{ order.order_id }}</p>
+                                </div>
+                                <div>
+                                    <p style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-gray-medium);">ORDER DATE</p>
+                                    <p style="margin: 0; font-weight: 600;">{{ order.created_at|date.strftime('%b %d, %Y') }}</p>
+                                </div>
+                                <div>
+                                    <p style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-gray-medium);">TOTAL</p>
+                                    <p style="margin: 0; font-weight: 700; color: var(--color-primary); font-size: var(--font-size-lg);">${{ order.total }}</p>
+                                </div>
+                                <div>
+                                    <span style="display: inline-block; padding: var(--spacing-sm) var(--spacing-md); border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: 600;
+                                    {% if order.status == 'pending' %}
+                                        background-color: #fff3cd; color: var(--color-warning);
+                                    {% elif order.status == 'shipped' %}
+                                        background-color: var(--color-green-very-light); color: var(--color-primary);
+                                    {% elif order.status == 'delivered' %}
+                                        background-color: var(--color-green-very-light); color: var(--color-success);
+                                    {% else %}
+                                        background-color: #ffebee; color: var(--color-danger);
+                                    {% endif %}
+                                    ">{{ order.status|upper }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Order Items -->
+                            <div style="margin-bottom: var(--spacing-lg);">
+                                {% for item in order.items %}
+                                    <div style="display: grid; grid-template-columns: 80px 1fr auto; gap: var(--spacing-lg); align-items: center; padding: var(--spacing-md) 0; border-bottom: 1px solid var(--color-gray);">
+                                        <img src="{{ item.bird_image }}" alt="{{ item.bird_name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md);" />
+                                        <div>
+                                            <h4 style="margin: 0 0 var(--spacing-sm);">{{ item.bird_name }}</h4>
+                                            <p style="margin: 0; font-size: var(--font-size-sm); color: var(--color-gray-medium);">{{ item.breed_type }} • Qty: {{ item.quantity }}</p>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <p style="margin: 0; font-weight: 700; color: var(--color-primary);">${{ item.price }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Order Actions -->
+                            <div style="display: flex; gap: var(--spacing-md);">
+                                <a href="/order-tracking/{{ order.order_id }}" class="btn btn-outline">Track Order</a>
+                                {% if order.status == 'delivered' %}
+                                    <button class="btn btn-outline" onclick="leaveReview('{{ order.order_id }}')">Leave Review</button>
+                                {% endif %}
+                                <button class="btn btn-outline" onclick="contactSeller('{{ order.seller_id }}')">Contact Seller</button>
+                                {% if order.status == 'pending' %}
+                                    <button class="btn btn-outline" onclick="cancelOrder('{{ order.order_id }}')">Cancel Order</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div style="text-align: center; padding: var(--spacing-2xl); background-color: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                    <div style="font-size: 4rem; margin-bottom: var(--spacing-lg);">📦</div>
+                    <h2 style="color: var(--color-primary); margin-bottom: var(--spacing-md);">No Orders Yet</h2>
+                    <p style="color: var(--color-gray-medium); margin-bottom: var(--spacing-lg);">Start shopping and your orders will appear here</p>
+                    <a href="/marketplace" class="btn btn-primary">Browse Birds</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterOrders(status) {
+            if (status === 'all') {
+                window.location.href = '/order-history';
+            } else {
+                window.location.href = `/order-history?status=${status}`;
+            }
+        }
+
+        function leaveReview(orderId) {
+            window.location.href = `/review/new?order_id=${orderId}`;
+        }
+
+        function contactSeller(sellerId) {
+            window.location.href = `/messages?seller_id=${sellerId}`;
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('Are you sure you want to cancel this order?')) {
+                API.post(`/orders/${orderId}/cancel`)
+                    .then(response => {
+                        Notification.success('Order cancelled successfully');
+                        location.reload();
+                    })
+                    .catch(error => {
+                        Notification.error('Failed to cancel order');
+                    });
+            }
+        }
+    </script>
+{% endblock %}

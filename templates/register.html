@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Avian Haven{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}" />
+{% endblock %}
+
+{% block content %}
+    <div class="auth-container">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <!-- Header -->
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <div class="auth-logo-icon">🐦</div>
+                        <span>Avian Haven</span>
+                    </div>
+                    <h1>Create Account</h1>
+                    <p>Join our community today</p>
+                </div>
+
+                <!-- Body -->
+                <div class="auth-body">
+                    <!-- Register Form -->
+                    <form id="register-form" class="auth-form active" data-endpoint="/auth/register" method="POST">
+                        <!-- Account Type Selection -->
+                        <div class="form-group">
+                            <label class="form-label">Account Type</label>
+                            <div class="role-selector">
+                                <div class="role-option">
+                                    <input type="radio" id="role-buyer" name="role" value="buyer" required />
+                                    <label for="role-buyer" class="role-option-label">
+                                        <div class="role-option-icon">🛍️</div>
+                                        <div class="role-option-text">Buyer</div>
+                                    </label>
+                                </div>
+                                <div class="role-option">
+                                    <input type="radio" id="role-seller" name="role" value="seller" required />
+                                    <label for="role-seller" class="role-option-label">
+                                        <div class="role-option-icon">🏪</div>
+                                        <div class="role-option-text">Seller</div>
+                                    </label>
+                                </div>
+                                <div class="role-option">
+                                    <input type="radio" id="role-vet" name="role" value="vet" required />
+                                    <label for="role-vet" class="role-option-label">
+                                        <div class="role-option-icon">🩺</div>
+                                        <div class="role-option-text">Veterinarian</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label for="full_name" class="form-label">Full Name</label>
+                            <input
+                                type="text"
+                                id="full_name"
+                                name="full_name"
+                                class="form-control"
+                                placeholder="John Doe"
+                                required
+                                autocomplete="name"
+                            />
+                            <div class="form-error"></div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="your@email.com"
+                                required
+                                autocomplete="email"
+                            />
+                            <div class="form-error"></div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                class="form-control"
+                                placeholder="+1 (555) 123-4567"
+                                required
+                                autocomplete="tel"
+                            />
+                            <div class="form-error"></div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Create a strong password"
+                                required
+                                autocomplete="new-password"
+                            />
+                            <div class="form-error"></div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                class="form-control"
+                                placeholder="Confirm your password"
+                                required
+                                autocomplete="new-password"
+                            />
+                            <div class="form-error"></div>
+                        </div>
+
+                        <!-- Seller Fields -->
+                        <div data-role="seller" style="display: none;">
+                            <div class="form-group">
+                                <label for="business_name" class="form-label">Business Name</label>
+                                <input
+                                    type="text"
+                                    id="business_name"
+                                    name="business_name"
+                                    class="form-control"
+                                    placeholder="Your business name"
+                                />
+                                <div class="form-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="business_location" class="form-label">Business Location</label>
+                                <input
+                                    type="text"
+                                    id="business_location"
+                                    name="business_location"
+                                    class="form-control"
+                                    placeholder="City, State"
+                                />
+                                <div class="form-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Vet Fields -->
+                        <div data-role="vet" style="display: none;">
+                            <div class="form-group">
+                                <label for="license_number" class="form-label">License Number</label>
+                                <input
+                                    type="text"
+                                    id="license_number"
+                                    name="license_number"
+                                    class="form-control"
+                                    placeholder="Your veterinary license number"
+                                />
+                                <div class="form-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="clinic_name" class="form-label">Clinic/Practice Name</label>
+                                <input
+                                    type="text"
+                                    id="clinic_name"
+                                    name="clinic_name"
+                                    class="form-control"
+                                    placeholder="Your clinic name"
+                                />
+                                <div class="form-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="clinic_location" class="form-label">Clinic Location</label>
+                                <input
+                                    type="text"
+                                    id="clinic_location"
+                                    name="clinic_location"
+                                    class="form-control"
+                                    placeholder="City, State"
+                                />
+                                <div class="form-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="specialization" class="form-label">Specialization</label>
+                                <select id="specialization" name="specialization" class="form-control">
+                                    <option value="">Select your specialization</option>
+                                    <option value="avian">Avian Medicine</option>
+                                    <option value="exotic">Exotic Birds</option>
+                                    <option value="general">General Practice</option>
+                                    <option value="surgery">Avian Surgery</option>
+                                    <option value="nutrition">Bird Nutrition</option>
+                                </select>
+                                <div class="form-error"></div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" name="terms" required />
+                            <label for="terms">
+                                I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <!-- Newsletter Opt-in -->
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="newsletter" name="newsletter" checked />
+                            <label for="newsletter">
+                                Subscribe to our newsletter for bird care tips and updates
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="form-actions">
+                            <button type="submit" class="form-submit">Create Account</button>
+                        </div>
+                    </form>
+
+                    <!-- Divider -->
+                    <div class="form-divider">or sign up with</div>
+
+                    <!-- Social Login -->
+                    <div class="social-login">
+                        <button type="button" class="social-login-btn" data-provider="google">
+                            <span>🔍</span>
+                            <span>Google</span>
+                        </button>
+                        <button type="button" class="social-login-btn" data-provider="facebook">
+                            <span>f</span>
+                            <span>Facebook</span>
+                        </button>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="auth-footer">
+                        Already have an account?
+                        <a href="/login">Sign in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}
