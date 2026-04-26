@@ -133,7 +133,7 @@
                                     <tr>
                                         <td>#{{ order.id }}</td>
                                         <td>{{ order.bird_name }}</td>
-                                        <td>{{ order.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
                                         <td><span class="status-badge {{ order.status|lower }}">{{ order.status }}</span></td>
                                         <td>${{ order.total }}</td>
                                         <td>

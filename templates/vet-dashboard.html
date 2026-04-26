@@ -147,7 +147,7 @@
                                     <tr>
                                         <td>{{ consultation.client_name }}</td>
                                         <td>{{ consultation.bird_species }}</td>
-                                        <td>{{ consultation.date|date.strftime('%b %d, %Y') }}</td>
+                                        <td>{{ consultation.date.strftime('%b %d, %Y') }}</td>
                                         <td>{{ consultation.type }}</td>
                                         <td><span class="status-badge {{ consultation.status|lower }}">{{ consultation.status }}</span></td>
                                         <td>
@@ -192,7 +192,7 @@
                                     <tr>
                                         <td>{{ cert.name }}</td>
                                         <td>{{ cert.issued_by }}</td>
-                                        <td>{{ cert.expiry_date|date.strftime('%b %d, %Y') }}</td>
+                                        <td>{{ cert.expiry_date.strftime('%b %d, %Y') }}</td>
                                         <td><span class="status-badge {{ 'active' if cert.is_valid else 'rejected' }}">{{ 'Valid' if cert.is_valid else 'Expired' }}</span></td>
                                         <td>
                                             <div class="action-buttons">

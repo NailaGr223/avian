@@ -70,7 +70,7 @@
                                 </div>
                                 <div>
                                     <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Member Since</h4>
-                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.created_at|date.strftime('%b %d, %Y') }}</p>
+                                    <p style="margin: 0; font-weight: 600;">{{ profile_user.created_at.strftime('%b %d, %Y') }}</p>
                                 </div>
                                 <div>
                                     <h4 style="margin: 0 0 var(--spacing-sm); color: var(--color-gray-medium); font-size: var(--font-size-sm);">Response Time</h4>
@@ -113,7 +113,7 @@
                                                 {% for i in range(review.rating) %}★{% endfor %}
                                             </div>
                                         </div>
-                                        <span style="color: var(--color-gray-medium); font-size: var(--font-size-sm);">{{ review.created_at|date.strftime('%b %d, %Y') }}</span>
+                                        <span style="color: var(--color-gray-medium); font-size: var(--font-size-sm);">{{ review.created_at.strftime('%b %d, %Y') }}</span>
                                     </div>
                                     <p style="margin: 0; color: var(--color-gray-medium);">{{ review.text }}</p>
                                 </div>
@@ -150,7 +150,7 @@
                         <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
                             <div style="display: flex; justify-content: space-between; padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-gray);">
                                 <span style="color: var(--color-gray-medium);">Member Since</span>
-                                <strong>{{ profile_user.created_at|date.strftime('%b %d, %Y') }}</strong>
+                                <strong>{{ profile_user.created_at.strftime('%b %d, %Y') }}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; padding-bottom: var(--spacing-md); border-bottom: 1px solid var(--color-gray);">
                                 <span style="color: var(--color-gray-medium);">Response Rate</span>

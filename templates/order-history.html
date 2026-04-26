@@ -37,7 +37,7 @@
                                 </div>
                                 <div>
                                     <p style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-gray-medium);">ORDER DATE</p>
-                                    <p style="margin: 0; font-weight: 600;">{{ order.created_at|date.strftime('%b %d, %Y') }}</p>
+                                    <p style="margin: 0; font-weight: 600;">{{ order.created_at.strftime('%b %d, %Y') }}</p>
                                 </div>
                                 <div>
                                     <p style="margin: 0 0 var(--spacing-sm); font-size: var(--font-size-xs); color: var(--color-gray-medium);">TOTAL</p>

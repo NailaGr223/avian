@@ -13,7 +13,7 @@
             <div class="tracking-header">
                 <div>
                     <h1 style="margin: 0 0 var(--spacing-md);">Order #{{ order.id }}</h1>
-                    <p style="margin: 0; color: var(--color-gray-medium);">Ordered on {{ order.created_at|date.strftime('%b %d, %Y') }}</p>
+                    <p style="margin: 0; color: var(--color-gray-medium);">Ordered on {{ order.created_at.strftime('%b %d, %Y') }}</p>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-size: var(--font-size-sm); color: var(--color-gray-medium); margin-bottom: var(--spacing-md);">Status</div>
@@ -50,7 +50,7 @@
                     <div class="tracking-step-dot">✓</div>
                     <div class="tracking-step-content">
                         <div class="tracking-step-title">Order Placed</div>
-                        <div class="tracking-step-time">{{ order.created_at|date.strftime('%b %d, %Y at %I:%M %p') }}</div>
+                        <div class="tracking-step-time">{{ order.created_at.strftime('%b %d, %Y at %I:%M %p') }}</div>
                         <div class="tracking-step-description">Your order has been successfully placed and confirmed.</div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="tracking-step-dot">📦</div>
                     <div class="tracking-step-content">
                         <div class="tracking-step-title">Processing</div>
-                        <div class="tracking-step-time">{% if order.processing_date %}{{ order.processing_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-time">{% if order.processing_date %}{{ order.processing_date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
                         <div class="tracking-step-description">The seller is preparing your bird for shipment. Health checks and documentation are being completed.</div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="tracking-step-dot">🚚</div>
                     <div class="tracking-step-content">
                         <div class="tracking-step-title">Shipped</div>
-                        <div class="tracking-step-time">{% if order.shipped_date %}{{ order.shipped_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-time">{% if order.shipped_date %}{{ order.shipped_date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
                         <div class="tracking-step-description">
                             Your order has been shipped!
                             {% if order.tracking_number %}
@@ -88,8 +88,8 @@
                     <div class="tracking-step-dot">✈️</div>
                     <div class="tracking-step-content">
                         <div class="tracking-step-title">In Transit</div>
-                        <div class="tracking-step-time">{% if order.in_transit_date %}{{ order.in_transit_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
-                        <div class="tracking-step-description">Your bird is on its way to you. Expected delivery is {{ order.estimated_delivery|date.strftime('%b %d, %Y') }}.</div>
+                        <div class="tracking-step-time">{% if order.in_transit_date %}{{ order.in_transit_date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-description">Your bird is on its way to you. Expected delivery is {{ order.estimated_delivery.strftime('%b %d, %Y') }}.</div>
                     </div>
                 </div>
 
@@ -98,7 +98,7 @@
                     <div class="tracking-step-dot">🎉</div>
                     <div class="tracking-step-content">
                         <div class="tracking-step-title">Delivered</div>
-                        <div class="tracking-step-time">{% if order.delivered_date %}{{ order.delivered_date|date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
+                        <div class="tracking-step-time">{% if order.delivered_date %}{{ order.delivered_date.strftime('%b %d, %Y at %I:%M %p') }}{% else %}Pending{% endif %}</div>
                         <div class="tracking-step-description">Your bird has been delivered! Please inspect it and confirm receipt.</div>
                     </div>
                 </div>

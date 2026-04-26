@@ -48,7 +48,7 @@
                                 <div class="chat-message-avatar">{{ message.sender_name[0] }}</div>
                                 <div class="chat-message-content">
                                     <div class="chat-message-text">{{ message.text }}</div>
-                                    <div class="chat-message-time">{{ message.created_at|date('HH:mm') }}</div>
+                                    <div class="chat-message-time">{{ message.created_at.strftime('%H:%M') }}</div>
                                 </div>
                             </div>
                         {% endfor %}

@@ -212,9 +212,41 @@ def vet_locator(request):
     context = {}
     return render(request, 'vet-locator.html', context)
 
+@login_required
 def blog(request):
-    context = {}
+    # Get query parameters
+    page = request.GET.get('page', 1)
+    search = request.GET.get('search', '')
+    category = request.GET.get('category', '')
+    tag = request.GET.get('tag', '')
+    
+    # Get blog posts (you'll need to create a BlogPost model first)
+    # For now, return empty list
+    blog_posts = []
+    recent_posts = []
+    
+    # Calculate pagination
+    posts_per_page = 9
+    total_posts = len(blog_posts)
+    total_pages = (total_posts + posts_per_page - 1) // posts_per_page if total_posts > 0 else 1
+    current_page = int(page) if page.isdigit() else 1
+    
+    context = {
+        'blog_posts': blog_posts,
+        'recent_posts': recent_posts,
+        'total_pages': total_pages,
+        'current_page': current_page,
+        'categories': {
+            'care': 0,
+            'health': 0,
+            'nutrition': 0,
+            'behavior': 0,
+            'stories': 0,
+        },
+        'popular_tags': ['avian-care', 'health-tips', 'nutrition', 'training'],
+    }
     return render(request, 'blog.html', context)
+
 
 def blog_detail(request, post_id):
     context = {}
@@ -263,3 +295,34 @@ def admin_dashboard(request):
     
     context = {}
     return render(request, 'admin-dashboard.html', context)
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(buyer=request.user).order_by('-created_at')
+    
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'order-history.html', context)
+
+def how_it_works(request):
+    context = {}
+    return render(request, 'how-it-works.html', context)
+
+def adoption_guide(request):
+    context = {}
+    return render(request, 'adoption-guide.html', context)
+
+@login_required
+def seller_verification(request):
+    context = {}
+    return render(request, 'seller-verification.html', context)
+
+@login_required
+def vet_verification(request):
+    context = {}
+    return render(request, 'vet-verification.html', context)
+
+@login_required
+def payment_status(request):
+    context = {}
+    return render(request, 'payment-status.html', context)

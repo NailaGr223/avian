@@ -60,7 +60,7 @@
                     </div>
                     <div class="bird-detail-item">
                         <span class="bird-detail-label">Listed</span>
-                        <span class="bird-detail-value">{{ bird.created_at|date.strftime('%b %d, %Y') }}</span>
+                        <span class="bird-detail-value">{{ bird.created_at.strftime('%b %d, %Y') }}</span>
                     </div>
                 </div>
 
@@ -114,7 +114,7 @@
                             <div class="review-content">
                                 <div class="review-header">
                                     <span class="review-author">{{ review.author_name }}</span>
-                                    <span class="review-date">{{ review.created_at|date.strftime('%b %d, %Y') }}</span>
+                                    <span class="review-date">{{ review.created_at.strftime('%b %d, %Y') }}</span>
                                 </div>
                                 <div class="review-rating">
                                     {% for i in range(review.rating) %}★{% endfor %}

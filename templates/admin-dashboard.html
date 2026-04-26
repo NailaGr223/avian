@@ -172,7 +172,7 @@
                                         <td>{{ user.full_name }}</td>
                                         <td>{{ user.email }}</td>
                                         <td>{{ user.user_type }}</td>
-                                        <td>{{ user.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td>{{ user.created_at.strftime('%b %d, %Y') }}</td>
                                         <td><span class="status-badge {{ 'active' if user.is_active else 'rejected' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td>
                                         <td>
                                             <div class="action-buttons">
@@ -217,7 +217,7 @@
                                         <td>{{ report.item_type }}: {{ report.item_name }}</td>
                                         <td>{{ report.reason }}</td>
                                         <td>{{ report.reporter_name }}</td>
-                                        <td>{{ report.created_at|date.strftime('%b %d, %Y') }}</td>
+                                        <td>{{ report.created_at.strftime('%b %d, %Y') }}</td>
                                         <td><span class="status-badge {{ report.status|lower }}">{{ report.status }}</span></td>
                                         <td>
                                             <div class="action-buttons">

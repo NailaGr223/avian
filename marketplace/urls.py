@@ -16,6 +16,7 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('order-tracking/', views.order_tracking, name='order_tracking'),
     path('order-tracking/<int:order_id>/', views.order_tracking, name='order_tracking_detail'),
+    path('order-history/', views.order_history, name='order_history'),
     path('chat/', views.chat, name='chat'),
     path('chat/<int:user_id>/', views.chat, name='chat_detail'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
@@ -27,12 +28,21 @@ urlpatterns = [
     path('vet-locator/', views.vet_locator, name='vet_locator'),
     path('blog/', views.blog, name='blog'),
     path('blog/<int:post_id>/', views.blog_detail, name='blog_detail'),
+    path('how-it-works/', views.how_it_works, name='how_it_works'),
+    path('adoption-guide/', views.adoption_guide, name='adoption_guide'),
     
     # Dashboards
-    path('dashboard/buyer/', views.buyer_dashboard, name='buyer_dashboard'),
-    path('dashboard/seller/', views.seller_dashboard, name='seller_dashboard'),
-    path('dashboard/vet/', views.vet_dashboard, name='vet_dashboard'),
-    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('buyer-dashboard/', views.buyer_dashboard, name='buyer_dashboard'),
+    path('seller-dashboard/', views.seller_dashboard, name='seller_dashboard'),
+    path('vet-dashboard/', views.vet_dashboard, name='vet_dashboard'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    
+    # Verification pages
+    path('seller-verification/', views.seller_verification, name='seller_verification'),
+    path('vet-verification/', views.vet_verification, name='vet_verification'),
+    
+    # Payment and order pages
+    path('payment-status/', views.payment_status, name='payment_status'),
     
     # API endpoints
     path('api/cart/add/<int:bird_id>/', api.add_to_cart, name='api_add_to_cart'),
